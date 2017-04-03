@@ -1,5 +1,7 @@
 package com.example.dobrowol.styloweplywanie.welcome;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.dobrowol.styloweplywanie.R;
-import com.example.dobrowol.styloweplywanie.teammanagement.TeamActivity;
 import com.example.dobrowol.styloweplywanie.utils.ITeamDataUtils;
 import com.example.dobrowol.styloweplywanie.utils.TeamDataUtils;
 
@@ -29,6 +30,7 @@ public class CreateTeamActivity extends AppCompatActivity implements View.OnClic
     private EditText editTextTeamName;
     private Button createTeamButton;
     protected ITeamDataUtils teamDataUtils;
+    public final static String RETURNED_DATA_KEY = "TeamName";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +45,11 @@ public class CreateTeamActivity extends AppCompatActivity implements View.OnClic
 
 
     }
+    public static void startCreateTeamsActivity(Context context) {
+        Intent intent = new Intent(context, CreateTeamActivity.class);
 
+        context.startActivity(intent);
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -54,17 +60,23 @@ public class CreateTeamActivity extends AppCompatActivity implements View.OnClic
                 editTextTeamName.setText("");
                 break;
             case R.id.button_CreateTeamActivity:
-                Log.d("DUPA", "CreateTeamActivity create team button");
                 String teamName = editTextTeamName.getText().toString();
                 teamDataUtils.addTeam(teamName, String.valueOf(editTextCoachName.getText()));
 
-                Intent intent = new Intent(this, TeamActivity.class);
-                intent.putExtra("teamName", teamName);
+                finishWithResult(teamName);
                 break;
             default:
                 break;
 
 
         }
+    }
+
+    private void finishWithResult(String teamName) {
+        Intent returnIntent = new Intent();
+
+        returnIntent.putExtra(RETURNED_DATA_KEY,teamName);
+        setResult(Activity.RESULT_OK,returnIntent);
+        finish();
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -53,11 +52,10 @@ public class AddStudentActivity extends AppCompatActivity implements View.OnClic
                 studentAge.setText("");
                 break;
             case R.id.button_addStudentOK:
-                Log.d("DUPA", "add student OK button");
                 addStudent();
                 break;
             default:
-                Log.d("DUPA", "uknown id" + v.getId());
+                break;
         }
     }
 

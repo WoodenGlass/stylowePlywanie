@@ -120,9 +120,7 @@ public class TeamDetailsActivity extends AppCompatActivity {
             case R.id.action_addTeamMember:
                 showAddStudent();
                 return true;
-            case R.id.action_addTeam:
 
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

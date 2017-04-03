@@ -21,4 +21,6 @@
     <string name="action_settings">ustawienia</string>
     <string name="action_addTeam">Dodaj Zespół</string>
     <string name="action_teamMember">Dodaj Ucznia</string>
+    <string name="team">Zespół</string>
+    <string name="wasCreated">został utworzony</string>
 </resources>
