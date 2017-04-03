@@ -37,6 +37,10 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jointeam);
+
+        //TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
+        //teamDataUtils.clearCache();
+
         itemsView = (RecyclerView) findViewById(R.id.items_view);
         itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 

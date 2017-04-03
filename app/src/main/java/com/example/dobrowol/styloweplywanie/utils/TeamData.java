@@ -7,9 +7,9 @@ import java.util.ArrayList;
  * Created by dobrowol on 16.03.17.
  */
 public class TeamData implements Serializable{
-    private String teamName;
-    private String coachName;
-    private ArrayList<StudentData> students;
+    public String teamName;
+    public String coachName;
+    public ArrayList<StudentData> students;
 
     TeamData(String team, String coach)
     {
@@ -19,6 +19,10 @@ public class TeamData implements Serializable{
     }
     public void addCoach(String text) {
 
+    }
+    public ArrayList<StudentData> getStudents()
+    {
+        return students;
     }
     public String getTeamName()
     {

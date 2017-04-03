@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -15,17 +17,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dobrowol.styloweplywanie.R;
+import com.example.dobrowol.styloweplywanie.utils.StudentAdapter;
 import com.example.dobrowol.styloweplywanie.utils.StudentData;
 import com.example.dobrowol.styloweplywanie.utils.TeamData;
 import com.example.dobrowol.styloweplywanie.utils.TeamDataUtils;
-import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by dobrowol on 30.03.17.
  */
 
-public class TeamDetailsActivity extends AppCompatActivity {
+public class TeamDetailsActivity extends AppCompatActivity implements StudentAdapter.StudentSelectedListener {
     private static final String KEY = "TeamData";
     private static final int GET_USER_REQUEST = 1;
     private TextView firstLine;
@@ -36,6 +41,9 @@ public class TeamDetailsActivity extends AppCompatActivity {
     private TeamData teamData;
     private Menu menu;
     private Toolbar myToolbar;
+    private ArrayList<StudentData> items;
+    private StudentAdapter adapter;
+    private RecyclerView itemsView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,10 @@ public class TeamDetailsActivity extends AppCompatActivity {
         thirdLine = (TextView) findViewById(R.id.thirdLine);
         fourthLine = (TextView) findViewById(R.id.fourthLine);
         imageView = (ImageView) findViewById(R.id.imageView);
+        itemsView = (RecyclerView) findViewById(R.id.student_view);
+        itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        adapter = new StudentAdapter(this, Picasso.with(this));
+        itemsView.setAdapter(adapter);
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
             teamData = (TeamData) intent.getExtras().getSerializable(KEY);
@@ -55,6 +67,8 @@ public class TeamDetailsActivity extends AppCompatActivity {
         }
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        fetchStudents();
 
     }
 
@@ -77,14 +91,19 @@ public class TeamDetailsActivity extends AppCompatActivity {
                 return new Point(actionBarHeight/2, actionBarWidth/2);
             }
         };
-        new ShowcaseView.Builder(this)
+       /* new ShowcaseView.Builder(this)
                 .withMaterialShowcase()
                 .setStyle(R.style.CustomShowcaseTheme2)
                 .setTarget(homeTarget)
                 .setContentTitle("Dodaj ucznia")
                 .setContentText("Tu możesz dodac nowego ucznia")
                 .hideOnTouchOutside()
-                .build();
+                .build();*/
+    }
+    private void fetchStudents() {
+        items = teamData.students;
+        adapter.setItems(items);
+
     }
 
     private void fillUserDetails() {
@@ -146,8 +165,14 @@ public class TeamDetailsActivity extends AppCompatActivity {
                 thirdLine.setText("Ilość uczniow " + teamData.getSize());
                 TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
                 teamDataUtils.updateTeam(teamData);
+                fetchStudents();
             }
 
         }
+    }
+
+    @Override
+    public void onItemSelected(StudentData item) {
+
     }
 }
