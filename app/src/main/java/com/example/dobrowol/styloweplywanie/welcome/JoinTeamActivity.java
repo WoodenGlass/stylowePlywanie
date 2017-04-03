@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.teammanagement.TeamDetailsActivity;
@@ -53,5 +55,12 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
     @Override
     public void onItemSelected(TeamData item) {
         fetchTeam(item.getTeamName());
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_jointeam, menu);
+
+        return true;
     }
 }
