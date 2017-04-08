@@ -1,6 +1,7 @@
 package com.example.dobrowol.styloweplywanie.utils;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Log.d("DUPA position ", String.valueOf(items.size()));
         TeamData textAtPosition = items.get(position);
-        holder.fillView(textAtPosition, imageLoader);
+        if (textAtPosition != null)
+        {
+            holder.fillView(textAtPosition, imageLoader);
+        }
     }
 
     public void setItems(List<TeamData> items) {

@@ -6,6 +6,11 @@
         android:icon="@drawable/ic_person_add_black_24dp"
         android:title="@string/action_teamMember"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_addTraining"
+        android:icon="@drawable/calendar_icon"
+        android:title="@string/action_teamMember"
+        app:showAsAction="always"/>
 
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
