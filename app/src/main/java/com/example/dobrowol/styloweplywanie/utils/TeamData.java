@@ -10,12 +10,14 @@ public class TeamData implements Serializable{
     public String teamName;
     public String coachName;
     public ArrayList<StudentData> students;
+    public ArrayList<TrainingData> trainings;
 
     TeamData(String team, String coach)
     {
         teamName = team;
         coachName = coach;
         students = new ArrayList<StudentData>();
+        trainings = new ArrayList<TrainingData>();
     }
     public void addCoach(String text) {
 

@@ -23,4 +23,8 @@
     <string name="action_teamMember">Dodaj Ucznia</string>
     <string name="team">Zespół</string>
     <string name="wasCreated">został utworzony</string>
+    <string name="action_training">Dodaj trening</string>
+    <string name="edit_setdescription">opis zadania</string>
+    <string name="style">styl</string>
+    <string name="set_description">opis ćwiczenia</string>
 </resources>

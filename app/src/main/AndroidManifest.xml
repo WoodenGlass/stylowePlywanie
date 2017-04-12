@@ -66,6 +66,16 @@
                 android:value=".teammanagement.TeamDetailsActivity" />
 
         </activity>
+        <activity android:name=".teammanagement.AddTrainingActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".teammanagement.TeamDetailsActivity"/>
+        </activity>
+        <activity android:name=".teammanagement.AddTrainingSetActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".teammanagement.AddTrainingActivity"/>
+        </activity>
     </application>
 
 </manifest>
