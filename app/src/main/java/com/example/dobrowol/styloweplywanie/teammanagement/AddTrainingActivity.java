@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.utils.TeamData;
-import com.example.dobrowol.styloweplywanie.utils.TeamDataUtils;
 import com.example.dobrowol.styloweplywanie.utils.TrainingData;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -37,6 +36,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,11 +46,14 @@ import java.util.List;
 public class AddTrainingActivity extends AppCompatActivity implements OnDateSelectedListener, View.OnClickListener {
     private static final int GET_TRAINING_SETS_REQUEST = 1;
     public static final String TRAINING_SET_KEY = "TRAINING_DATE";
+    public static String TRAINING_DATA="TRAINING_DATA";
     private MaterialCalendarView simpleCalendarView;
     private Button buttonAddTraining;
     private TrainingAdapter trainingAdapter;
     private RecyclerView list;
     private TeamData teamData;
+    private TrainingData trainingData;
+    private Date selectedDate;
 
     public static final String KEY = "TeamData";
     public static final String[] EVENT_PROJECTION = new String[]{
@@ -73,12 +76,13 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
         setContentView(R.layout.activity_addtraining);
 
         setupRecyclerView();
-        listTrainingsFromContext();
+
 
         buttonAddTraining = (Button) findViewById(R.id.button_createTraining);
         buttonAddTraining.setOnClickListener(this);
         simpleCalendarView = (MaterialCalendarView) findViewById(R.id.simpleCalendarView); // get the reference of CalendarView
         simpleCalendarView.setOnDateChangedListener(this);
+        listTrainingsFromContext();
     }
 
     private void setupRecyclerView() {
@@ -97,7 +101,7 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
             teamData = (TeamData) intent.getExtras().getSerializable(KEY);
-            trainingAdapter.setSamples(teamData.trainings);
+            trainingAdapter.setSamples(teamData.trainings.get(selectedDate));
         }
     }
 
@@ -108,29 +112,28 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
         context.startActivity(intent);
 
     }
-    private void startAddTrainingSetActivity(CalendarDay date) {
+    private void startAddTrainingSetActivity(CalendarDay date, TrainingData trainingData) {
 
         Intent intent = new Intent(this, AddTrainingSetActivity.class);
         String trainingDate = date.getDay() + "/" + date.getMonth() + "/" + date.getYear();
-        intent.putExtra(TRAINING_SET_KEY, trainingDate);
-        //Intent pickContactIntent = new Intent(Intent.ACTION_PICK, ));
-        // Show user only contacts w/ phone numbers
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(TRAINING_DATA, trainingData);
+        bundle.putSerializable(TRAINING_SET_KEY, date.getDate());
+        intent.putExtras(bundle);
         startActivityForResult(intent, GET_TRAINING_SETS_REQUEST);
-
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == GET_TRAINING_SETS_REQUEST) {
             if(resultCode == Activity.RESULT_OK){
-                TrainingData trainingData = (TrainingData) data.getExtras().getSerializable(AddTrainingSetActivity.RETURNED_DATA_KEY);
-                teamData.trainings.add(trainingData);
-                TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
-                teamDataUtils.updateTeam(teamData);
-                trainingAdapter.setSamples(teamData.trainings);
+                TrainingData trainingData = (TrainingData) data.getExtras().getSerializable(TRAINING_DATA);
+                teamData.trainings.get(selectedDate).add(trainingData);
+                trainingAdapter.setSamples(teamData.trainings.get(selectedDate));
             }
-
         }
     }
+
     private void getCalendar() {
         Cursor cur = null;
         ContentResolver cr = getContentResolver();
@@ -169,7 +172,9 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         Toast.makeText(getApplicationContext(), date.getDay() + "/" + date.getMonth() + "/" + date.getYear(), Toast.LENGTH_SHORT).show();
-        startAddTrainingSetActivity(date);
+        trainingData = new TrainingData();
+        startAddTrainingSetActivity(date, trainingData);
+        selectedDate = date.getDate();
         //listAdapter.swapData(loadMyEvents(date.getDate()));
     }
 
@@ -240,8 +245,8 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
             {
                 trainingView.setText(trainingData.name);
                 DateFormat df = new SimpleDateFormat("HH:mm:ss");
-                String reportDate = df.format(trainingData.date);
-                trainingTime.setText(reportDate);
+                //String reportDate = df.format(trainingDatadate);
+                //trainingTime.setText(reportDate);
             }
 
             @Override

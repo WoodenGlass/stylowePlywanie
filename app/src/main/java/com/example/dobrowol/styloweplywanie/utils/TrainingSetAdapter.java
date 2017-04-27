@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.dobrowol.styloweplywanie.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -14,30 +13,31 @@ import java.util.List;
  * Created by dobrowol on 29.03.17.
  */
 
-public class TrainingSetAdapter extends RecyclerView.Adapter<StudentViewHolder> {
+public class TrainingSetAdapter extends RecyclerView.Adapter<TrainingSetHolder> {
 
-    private List<StudentData> items;
-    private StudentSelectedListener listener;
+    private List<TrainingSet> items;
+    private TrainingSetSelectedListener listener;
+    //private Picasso imageLoader;
 
 
-    public TrainingSetAdapter(StudentSelectedListener listener)
+    public TrainingSetAdapter(TrainingSetSelectedListener listener)
     {
-
+      //  this.imageLoader = loader;
         this.listener = listener;
     }
     @Override
-    public StudentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TrainingSetHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View listItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_teamlistitem, parent, false);
-        return new StudentViewHolder(listItemView, listener);
+        return new TrainingSetHolder(listItemView, listener);
     }
 
     @Override
-    public void onBindViewHolder(StudentViewHolder holder, int position) {
-        StudentData textAtPosition = items.get(position);
-        holder.fillView(textAtPosition, imageLoader);
+    public void onBindViewHolder(TrainingSetHolder holder, int position) {
+        TrainingSet textAtPosition = items.get(position);
+        holder.fillView(textAtPosition);
     }
 
-    public void setItems(List<StudentData> items) {
+    public void setItems(List<TrainingSet> items) {
         this.items = items;
     }
 
@@ -46,8 +46,8 @@ public class TrainingSetAdapter extends RecyclerView.Adapter<StudentViewHolder> 
         return items != null ? items.size() : 0;
     }
 
-    public interface StudentSelectedListener
+    public interface TrainingSetSelectedListener
     {
-        public void onItemSelected(StudentData item);
+        public void onItemSelected(TrainingSet item);
     }
 }

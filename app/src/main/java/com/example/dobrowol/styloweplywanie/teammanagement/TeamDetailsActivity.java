@@ -163,7 +163,6 @@ public class TeamDetailsActivity extends AppCompatActivity implements StudentAda
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        Log.d("DUPA", "onActivityResult");
         if (requestCode == GET_USER_REQUEST) {
             if(resultCode == Activity.RESULT_OK){
                 StudentData studentData = (StudentData) data.getExtras().getSerializable(AddStudentActivity.RETURNED_DATA_KEY);

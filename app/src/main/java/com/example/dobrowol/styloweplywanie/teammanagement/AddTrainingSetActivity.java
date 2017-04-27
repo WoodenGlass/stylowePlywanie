@@ -1,27 +1,26 @@
 package com.example.dobrowol.styloweplywanie.teammanagement;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.utils.SwimmingStyles;
+import com.example.dobrowol.styloweplywanie.utils.TrainingData;
 import com.example.dobrowol.styloweplywanie.utils.TrainingSet;
+import com.example.dobrowol.styloweplywanie.utils.TrainingSetAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 import static com.example.dobrowol.styloweplywanie.utils.Utils.swimmingStylesNames;
 
@@ -29,13 +28,14 @@ import static com.example.dobrowol.styloweplywanie.utils.Utils.swimmingStylesNam
  * Created by dobrowol on 10.04.17.
  */
 
-public class AddTrainingSetActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddTrainingSetActivity extends AppCompatActivity implements View.OnClickListener, TrainingSetAdapter.TrainingSetSelectedListener {
     public static final String RETURNED_DATA_KEY = "TrainingDataSet";
-    private String trainingdDate;
+    private Date trainingDate;
     private ArrayList<TrainingSet> trainingSets;
     private TrainingSetAdapter adapter;
     private FloatingActionButton addButton;
     private EditText distance;
+    private TrainingData trainingData;
     RecyclerView setsView;
 
     private EditText description;
@@ -49,13 +49,17 @@ public class AddTrainingSetActivity extends AppCompatActivity implements View.On
         setsView = (RecyclerView) findViewById(R.id.training_sets_view);
         setsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         setsView.setAdapter(adapter);
+        trainingSets = new ArrayList<>();
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(AddTrainingActivity.TRAINING_SET_KEY)) {
-            trainingdDate =  intent.getStringExtra(AddTrainingActivity.TRAINING_SET_KEY);
-        }
-        trainingSets = new ArrayList<>();
+            trainingDate =  (Date) intent.getExtras().getSerializable(AddTrainingActivity.TRAINING_SET_KEY);
+            trainingData = (TrainingData) intent.getExtras().getSerializable(AddTrainingActivity.TRAINING_DATA);
+            //trainingSets = trainingData.trainingSets;
 
-        adapter.setSamples(trainingSets);
+        }
+
+
+        adapter.setItems(trainingSets);
         addButton = (FloatingActionButton) findViewById(R.id.floatingActionButton_trainingSet);
         addButton.setOnClickListener(this);
         distance = (EditText) findViewById(R.id.editText_distance);
@@ -72,18 +76,31 @@ public class AddTrainingSetActivity extends AppCompatActivity implements View.On
         switch (v.getId())
         {
             case R.id.floatingActionButton_trainingSet:
+                Log.d("DUPA", "floating add");
                 int dist = Integer.parseInt(distance.getText().toString());
                 String desc = description.getText().toString();
                 SwimmingStyles st = SwimmingStyles.valueOf(style.getText().toString());
                 TrainingSet set = new TrainingSet(dist, st, desc);
                 trainingSets.add(set);
-                adapter.setSamples(trainingSets);
+                adapter.setItems(trainingSets);
                 break;
+            default:
+                Intent returnIntent = new Intent();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(AddTrainingActivity.TRAINING_DATA,trainingData);
+                returnIntent.putExtras(bundle);
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
 
         }
     }
 
-    class TrainingSetAdapter extends RecyclerView.Adapter<TrainingSetAdapter.TrainingSetViewHolder> {
+    @Override
+    public void onItemSelected(TrainingSet item) {
+
+    }
+
+   /* class TrainingSetAdapter extends RecyclerView.Adapter<TrainingSetAdapter.TrainingSetViewHolder> {
 
         private final LayoutInflater inflater;
         private List<TrainingSet> samples;
@@ -140,5 +157,5 @@ public class AddTrainingSetActivity extends AppCompatActivity implements View.On
 
             }
         }
-    }
+    }*/
 }

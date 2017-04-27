@@ -2,6 +2,9 @@ package com.example.dobrowol.styloweplywanie.utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by dobrowol on 16.03.17.
@@ -10,14 +13,14 @@ public class TeamData implements Serializable{
     public String teamName;
     public String coachName;
     public ArrayList<StudentData> students;
-    public ArrayList<TrainingData> trainings;
+    public Map<Date, ArrayList<TrainingData>> trainings;
 
     TeamData(String team, String coach)
     {
         teamName = team;
         coachName = coach;
         students = new ArrayList<StudentData>();
-        trainings = new ArrayList<TrainingData>();
+        trainings = new HashMap<>();
     }
     public void addCoach(String text) {
 
