@@ -27,4 +27,5 @@
     <string name="edit_setdescription">opis zadania</string>
     <string name="style">styl</string>
     <string name="set_description">opis ćwiczenia</string>
+    <string name="distance_hint">dystans</string>
 </resources>

@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dobrowol.styloweplywanie.R;
-import com.squareup.picasso.Picasso;
 
 /**
  * Created by dobrowol on 29.03.17.
@@ -16,10 +15,10 @@ public class TrainingSetHolder extends RecyclerView.ViewHolder implements View.O
     private final TextView teamLabel;
     private final TextView descriptionLabel;
     private final ImageView profileImage;
-    private ItemsAdapter.ItemsSelectedListener listener;
-    private TeamData userDetails;
+    private TrainingSetAdapter.TrainingSetSelectedListener listener;
+    private TrainingSet userDetails;
 
-    public TrainingSetHolder(View itemView, ItemsAdapter.ItemsSelectedListener listener) {
+    public TrainingSetHolder(View itemView, TrainingSetAdapter.TrainingSetSelectedListener listener) {
         super(itemView);
         teamLabel = (TextView) itemView.findViewById(R.id.team_label);
         descriptionLabel = (TextView) itemView.findViewById(R.id.description_label);
@@ -28,10 +27,10 @@ public class TrainingSetHolder extends RecyclerView.ViewHolder implements View.O
         itemView.setOnClickListener(this);
     }
 
-    public void fillView(TeamData userDetails, Picasso imageLoader) {
+    public void fillView(TrainingSet userDetails) {
         this.userDetails = userDetails;
-        teamLabel.setText(this.userDetails.getTeamName());
-        descriptionLabel.setText(this.userDetails.getCoachName());
+        teamLabel.setText(this.userDetails.style.toString());
+        descriptionLabel.setText(this.userDetails.description);
         //imageLoader.load(this.userDetails.getImageUrl()).into(profileImage);
     }
 
