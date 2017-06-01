@@ -142,7 +142,6 @@ public class TeamDetailsActivity extends AppCompatActivity implements StudentAda
                 showAddStudent();
                 return true;
             case R.id.action_addTraining:
-                Log.d("DUPA", "add training");
                 AddTrainingActivity.startAddTrainingActivity(teamData, this);
                 return true;
             default:

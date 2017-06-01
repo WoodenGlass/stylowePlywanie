@@ -27,7 +27,7 @@ public class TrainingSetAdapter extends RecyclerView.Adapter<TrainingSetHolder> 
     }
     @Override
     public TrainingSetHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View listItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_teamlistitem, parent, false);
+        View listItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_trainingsetlistitem, parent, false);
         return new TrainingSetHolder(listItemView, listener);
     }
 

@@ -1,6 +1,8 @@
 package com.example.dobrowol.styloweplywanie.utils;
 
-public class TrainingSet {
+import java.io.Serializable;
+
+public class TrainingSet implements Serializable{
     public int distance;
     public SwimmingStyles style;
     public String excercise;

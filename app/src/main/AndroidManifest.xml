@@ -71,7 +71,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".teammanagement.TeamDetailsActivity"/>
         </activity>
-        <activity android:name=".teammanagement.AddTrainingSetActivity">
+        <activity android:name=".teammanagement.AddTrainingDetails">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".teammanagement.AddTrainingActivity"/>

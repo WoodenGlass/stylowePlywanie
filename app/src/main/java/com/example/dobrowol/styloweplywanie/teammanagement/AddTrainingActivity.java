@@ -34,8 +34,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -112,15 +111,16 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
         context.startActivity(intent);
 
     }
-    private void startAddTrainingSetActivity(CalendarDay date, TrainingData trainingData) {
+    private void startAddTrainingDetailsActivity(CalendarDay date, TrainingData trainingData) {
 
-        Intent intent = new Intent(this, AddTrainingSetActivity.class);
-        String trainingDate = date.getDay() + "/" + date.getMonth() + "/" + date.getYear();
+        Intent intent = new Intent(this, AddTrainingDetails.class);
+        /*String trainingDate = date.getDay() + "/" + date.getMonth() + "/" + date.getYear();
         Bundle bundle = new Bundle();
         bundle.putSerializable(TRAINING_DATA, trainingData);
         bundle.putSerializable(TRAINING_SET_KEY, date.getDate());
-        intent.putExtras(bundle);
-        startActivityForResult(intent, GET_TRAINING_SETS_REQUEST);
+        intent.putExtras(bundle);*/
+        //startActivityForResult(intent, GET_TRAINING_SETS_REQUEST);
+        startActivity(intent);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -128,10 +128,22 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
         if (requestCode == GET_TRAINING_SETS_REQUEST) {
             if(resultCode == Activity.RESULT_OK){
                 TrainingData trainingData = (TrainingData) data.getExtras().getSerializable(TRAINING_DATA);
-                teamData.trainings.get(selectedDate).add(trainingData);
-                trainingAdapter.setSamples(teamData.trainings.get(selectedDate));
+                ArrayList<TrainingData> trainings = setTrainingDatas(trainingData);
+                trainingAdapter.setSamples(trainings);
             }
         }
+    }
+
+    @NonNull
+    private ArrayList<TrainingData> setTrainingDatas(TrainingData trainingData) {
+        ArrayList<TrainingData> trainings = teamData.trainings.get(selectedDate);
+        if (trainings == null)
+        {
+            trainings = new ArrayList<>();
+        }
+        trainings.add(trainingData);
+        teamData.trainings.put(selectedDate, trainings);
+        return trainings;
     }
 
     private void getCalendar() {
@@ -173,8 +185,9 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         Toast.makeText(getApplicationContext(), date.getDay() + "/" + date.getMonth() + "/" + date.getYear(), Toast.LENGTH_SHORT).show();
         trainingData = new TrainingData();
-        startAddTrainingSetActivity(date, trainingData);
         selectedDate = date.getDate();
+        startAddTrainingDetailsActivity(date, trainingData);
+
         //listAdapter.swapData(loadMyEvents(date.getDate()));
     }
 
@@ -244,9 +257,8 @@ public class AddTrainingActivity extends AppCompatActivity implements OnDateSele
             public void fillView(TrainingData trainingData)
             {
                 trainingView.setText(trainingData.name);
-                DateFormat df = new SimpleDateFormat("HH:mm:ss");
-                //String reportDate = df.format(trainingDatadate);
-                //trainingTime.setText(reportDate);
+
+                trainingTime.setText("czas");
             }
 
             @Override

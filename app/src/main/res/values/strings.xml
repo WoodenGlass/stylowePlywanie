@@ -28,4 +28,6 @@
     <string name="style">styl</string>
     <string name="set_description">opis ćwiczenia</string>
     <string name="distance_hint">dystans</string>
+    <string name="training_time">godzina rozpoczęcia</string>
+    <string name="training_name">nazwa treningu</string>
 </resources>
