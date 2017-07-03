@@ -53,7 +53,7 @@ public class AddTrainingSetFragment extends Fragment implements View.OnClickList
         addButton = (FloatingActionButton) container.findViewById(R.id.floatingActionButton_trainingSet);
         addTraining = (ImageButton) container.findViewById(R.id.tick_button);
        /* ;*/
-        return inflater.inflate(R.layout.activity_addtrainingdata, container, false);
+        return inflater.inflate(R.layout.activity_addtrainingset, container, false);
 
     }
     @Override

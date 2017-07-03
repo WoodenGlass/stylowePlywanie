@@ -1,12 +1,16 @@
 package com.example.dobrowol.styloweplywanie.teammanagement.trainingdetails;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.utils.TrainingData;
@@ -27,15 +31,24 @@ public class AddTrainingDataFragment extends Fragment implements View.OnClickLis
     TrainingData trainingData;
     EditText trainingName;
     EditText trainingTime;
+    OnTrainigDataAddedListener callback;
+
+    public interface OnTrainigDataAddedListener {
+        /** Called by HeadlinesFragment when a list item is selected */
+        public void onCheckButtonClicked();
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       /* addTrainingDataButton = (ImageButton) container.findViewById(R.id.button_acceptTrainingData);
+        LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.activity_addtrainingdata, container, false);
+        addTrainingDataButton = (ImageButton) ll.findViewById(R.id.button_acceptTrainingData);
         addTrainingDataButton.setOnClickListener(this);
+        Log.d("DUPA", "DUPA AddTrainingDataFragment");
 
-        trainingName = (EditText) container.findViewById(R.id.editText_trainingName);
-        trainingTime = (EditText) container.findViewById(R.id.editText_trainingTime);*/
+        trainingName = (EditText) ll.findViewById(R.id.editText_trainingName);
+        trainingTime = (EditText) ll.findViewById(R.id.editText_trainingTime);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_addtrainingdata, container, false);
+        return ll;
 
     }
 
@@ -64,8 +77,28 @@ public class AddTrainingDataFragment extends Fragment implements View.OnClickLis
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                startAddTrainingSetActivity();
+
+                Log.d("DUPA", "DUPA");
+                callback.onCheckButtonClicked();
                 break;
+        }
+
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        Activity activity;
+
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+
+            try {
+                callback = (OnTrainigDataAddedListener) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(activity.toString()
+                        + " must implement OnTrainigDataAddedListener");
+            }
         }
 
     }
