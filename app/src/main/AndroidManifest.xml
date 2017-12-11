@@ -59,6 +59,12 @@
         <activity android:name=".teammanagement.TeamDetailsActivity">
 
         </activity>
+        <activity android:name=".teammanagement.StudentsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".welcome.JoinTeamActivity" />
+
+        </activity>
         <activity android:name=".teammanagement.AddStudentActivity"
             >
             <meta-data

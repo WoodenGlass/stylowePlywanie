@@ -7,6 +7,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -81,12 +82,17 @@ public class XMLDataUtil implements IDataUtil {
             Element students = doc.createElement("Students");
             for (StudentData studentData : teamData.students) {
                 Element name = doc.createElement("name");
-                firstname.appendChild(doc.createTextNode(studentData.name + studentData.surname));
+                name.appendChild(doc.createTextNode(studentData.name));
                 students.appendChild(name);
-                Element age = doc.createElement("age");
-                firstname.appendChild(doc.createTextNode(studentData.age));
+                Element surname = doc.createElement("surname");
+                surname.appendChild(doc.createTextNode(studentData.surname));
+                students.appendChild(surname);
+                Element age = doc.createElement("dateOfBirth");
+
+                age.appendChild(doc.createTextNode(studentData.age));
                 students.appendChild(age);
             }
+            rootElement.appendChild(students);
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = null;
 
@@ -112,8 +118,9 @@ public class XMLDataUtil implements IDataUtil {
 
         @Override
     public TeamData retrieveTeamData(String teamName) {
-        String fileName = context.getFilesDir() +"/"+prefix + teamName + ".xml";
-            TeamData teamData = getTeamData(new File(fileName));
+            String filename = prefix + teamName+".xml";
+            File file = new File(context.getFilesDir(), filename);
+            TeamData teamData = getTeamData(file);
         return teamData;
     }
 
@@ -136,7 +143,31 @@ public class XMLDataUtil implements IDataUtil {
             NodeList nodeCoachName = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
             NodeList nodeTeamName = (NodeList) exprTeamName.evaluate(doc, XPathConstants.NODESET);
             NamedNodeMap map = nodeTeamName.item(0).getAttributes();
+
             teamData= new TeamData(map.getNamedItem("name").getNodeValue(), nodeCoachName.item(0).getNodeValue());
+
+            XPathExpression exprStudents = xpath.compile("/Team/Students");
+
+            //Double count = (Double) exprStudents.evaluate(doc, XPathConstants.NUMBER);
+            NodeList nodeStudents = (NodeList) exprStudents.evaluate(doc, XPathConstants.NODESET);
+
+            StudentData studentData = null;
+
+            for (int i = 0; i < nodeStudents.getLength(); i++) {
+                studentData = new StudentData();
+                Element el = (Element) nodeStudents.item(i);
+                Node nameNode = el.getElementsByTagName("name").item(0);
+                Node surnameNode = el.getElementsByTagName("surname").item(0);
+                Node ageNode = el.getElementsByTagName("dateOfBirth").item(0);
+                if (nameNode !=null)
+                    studentData.name = el.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+                if (surnameNode != null)
+                    studentData.surname = el.getElementsByTagName("surname").item(0).getFirstChild().getNodeValue();
+                if (ageNode != null)
+                    studentData.age = el.getElementsByTagName("dateOfBirth").item(0).getFirstChild().getNodeValue();
+                teamData.addStudent(studentData);
+            }
+
         } catch (XPathExpressionException e) {
             e.printStackTrace();
         } catch (SAXException e) {

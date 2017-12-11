@@ -30,4 +30,5 @@
     <string name="distance_hint">dystans</string>
     <string name="training_time">godzina rozpoczęcia</string>
     <string name="training_name">nazwa treningu</string>
+    <string name="wasAdded">został dodany</string>
 </resources>

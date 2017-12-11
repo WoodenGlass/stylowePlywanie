@@ -2,11 +2,13 @@ package com.example.dobrowol.styloweplywanie.teammanagement;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.teammanagement.trainingdetails.AddTrainingDataFragment;
 import com.example.dobrowol.styloweplywanie.teammanagement.trainingdetails.AddTrainingSetFragment;
+import com.example.dobrowol.styloweplywanie.utils.TrainingData;
 
 /**
  * Created by dobrowol on 01.06.17.
@@ -14,6 +16,7 @@ import com.example.dobrowol.styloweplywanie.teammanagement.trainingdetails.AddTr
 
 public class AddTrainingDetails extends FragmentActivity
 implements AddTrainingDataFragment.OnTrainigDataAddedListener{
+    private TrainingData trainingData;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,17 +41,14 @@ implements AddTrainingDataFragment.OnTrainigDataAddedListener{
     }
 
     @Override
-    public void onCheckButtonClicked() {
+    public void onTrainingDataReturn(TrainingData trainingD) {
         Log.d("DUPA", "DUPA AddTrainingDetailsClick");
-        /*AddTrainingSetFragment trainingSetFragment = (AddTrainingSetFragment)
-                getSupportFragmentManager().findFragmentById(R.id.article_fragment);
-        if (trainingSetFragment == null)
-        {
-            trainingSetFragment = new AddTrainingSetFragment();
+            trainingData = trainingD;
+            AddTrainingSetFragment trainingSetFragment = new AddTrainingSetFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_trainingdetails, trainingSetFragment);
             transaction.addToBackStack(null);
             transaction.commit();
-        }*/
+
     }
 }

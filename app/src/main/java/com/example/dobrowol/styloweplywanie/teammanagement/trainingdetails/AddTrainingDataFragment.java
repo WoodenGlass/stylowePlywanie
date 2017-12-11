@@ -35,7 +35,7 @@ public class AddTrainingDataFragment extends Fragment implements View.OnClickLis
 
     public interface OnTrainigDataAddedListener {
         /** Called by HeadlinesFragment when a list item is selected */
-        public void onCheckButtonClicked();
+        public void onTrainingDataReturn(TrainingData trainingData);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +47,7 @@ public class AddTrainingDataFragment extends Fragment implements View.OnClickLis
 
         trainingName = (EditText) ll.findViewById(R.id.editText_trainingName);
         trainingTime = (EditText) ll.findViewById(R.id.editText_trainingTime);
+        trainingData = new TrainingData();
         // Inflate the layout for this fragment
         return ll;
 
@@ -79,7 +80,7 @@ public class AddTrainingDataFragment extends Fragment implements View.OnClickLis
                 }
 
                 Log.d("DUPA", "DUPA");
-                callback.onCheckButtonClicked();
+                callback.onTrainingDataReturn(trainingData);
                 break;
         }
 
