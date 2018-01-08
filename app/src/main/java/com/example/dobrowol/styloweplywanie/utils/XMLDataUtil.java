@@ -38,6 +38,19 @@ public class XMLDataUtil implements IDataUtil {
     private Context context;
     private final String prefix = "stylowe_";
 
+    public boolean fileExists(String filename) {
+        File file = context.getFileStreamPath(filename);
+        if (file == null || !file.exists()) {
+            return false;
+        }
+        return true;
+    }
+    public boolean fileExists(File file) {
+        if (file == null || !file.exists()) {
+            return false;
+        }
+        return true;
+    }
     public XMLDataUtil(Context cntxt) {
         context = cntxt;
     }
@@ -81,16 +94,22 @@ public class XMLDataUtil implements IDataUtil {
 
             Element students = doc.createElement("Students");
             for (StudentData studentData : teamData.students) {
+                Element student = doc.createElement("Student");
                 Element name = doc.createElement("name");
                 name.appendChild(doc.createTextNode(studentData.name));
-                students.appendChild(name);
+                student.appendChild(name);
                 Element surname = doc.createElement("surname");
                 surname.appendChild(doc.createTextNode(studentData.surname));
-                students.appendChild(surname);
+                student.appendChild(surname);
                 Element age = doc.createElement("dateOfBirth");
-
                 age.appendChild(doc.createTextNode(studentData.age));
-                students.appendChild(age);
+                student.appendChild(age);
+                studentData.dataFile = studentData.name+studentData.surname+".csv";
+                createDataFile(studentData.dataFile);
+                Element dataFile = doc.createElement("dataFile");
+                age.appendChild(doc.createTextNode(studentData.dataFile));
+                student.appendChild(age);
+                students.appendChild(student);
             }
             rootElement.appendChild(students);
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -102,7 +121,7 @@ public class XMLDataUtil implements IDataUtil {
             StreamResult result = new StreamResult(new File(context.getFilesDir(), prefix + teamData.teamName + ".xml"));
 
             // Output to console for testing
-            // StreamResult result = new StreamResult(System.out);
+           //  StreamResult result = new StreamResult(System.out);
 
             transformer.transform(source, result);
 
@@ -116,7 +135,16 @@ public class XMLDataUtil implements IDataUtil {
         }
     }
 
-        @Override
+    private void createDataFile(String dataFile) {
+        File f = new File(context.getFilesDir(),dataFile);
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public TeamData retrieveTeamData(String teamName) {
             String filename = prefix + teamName+".xml";
             File file = new File(context.getFilesDir(), filename);
@@ -130,6 +158,9 @@ public class XMLDataUtil implements IDataUtil {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = null;
         Document doc = null;
+
+        if (!fileExists(fileName))
+            return null;
         try {
             builder = factory.newDocumentBuilder();
 
@@ -146,7 +177,7 @@ public class XMLDataUtil implements IDataUtil {
 
             teamData= new TeamData(map.getNamedItem("name").getNodeValue(), nodeCoachName.item(0).getNodeValue());
 
-            XPathExpression exprStudents = xpath.compile("/Team/Students");
+            XPathExpression exprStudents = xpath.compile("/Team/Students/Student");
 
             //Double count = (Double) exprStudents.evaluate(doc, XPathConstants.NUMBER);
             NodeList nodeStudents = (NodeList) exprStudents.evaluate(doc, XPathConstants.NODESET);
@@ -159,12 +190,20 @@ public class XMLDataUtil implements IDataUtil {
                 Node nameNode = el.getElementsByTagName("name").item(0);
                 Node surnameNode = el.getElementsByTagName("surname").item(0);
                 Node ageNode = el.getElementsByTagName("dateOfBirth").item(0);
+                Node dataFile = el.getElementsByTagName("dataFile").item(0);
                 if (nameNode !=null)
-                    studentData.name = el.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+                    studentData.name = nameNode.getFirstChild().getNodeValue();
                 if (surnameNode != null)
-                    studentData.surname = el.getElementsByTagName("surname").item(0).getFirstChild().getNodeValue();
+                    studentData.surname = surnameNode.getFirstChild().getNodeValue();
                 if (ageNode != null)
-                    studentData.age = el.getElementsByTagName("dateOfBirth").item(0).getFirstChild().getNodeValue();
+                    studentData.age = ageNode.getFirstChild().getNodeValue();
+                if (dataFile !=null)
+                    studentData.dataFile = dataFile.getFirstChild().getNodeValue();
+                else
+                {
+                    studentData.dataFile = studentData.name+studentData.surname+".csv";
+                    createDataFile(studentData.dataFile);
+                }
                 teamData.addStudent(studentData);
             }
 
@@ -196,8 +235,24 @@ public class XMLDataUtil implements IDataUtil {
 
     @Override
     public void clearCache() {
+        File[] foundFiles = getFiles();
+        for (File file : foundFiles)
+        {
+            file.delete();
+        }
+    }
+
+    @Override
+    public void removeTeam(String teamName) {
+        String filename = prefix + teamName+".xml";
+        File file = new File(context.getFilesDir(), filename);
+        if (! file.delete())
+        {
+            //Log.d("DUPA", "cannot remove file " + file.getAbsolutePath());
+        }
 
     }
+
     private File[] getFiles() {
         File dir = new File(context.getFilesDir(), ".");
         return dir.listFiles(new FilenameFilter() {

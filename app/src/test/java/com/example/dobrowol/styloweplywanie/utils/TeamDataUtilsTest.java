@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 /**
@@ -31,9 +32,20 @@ public class TeamDataUtilsTest {
         File file = new File("./");
         when(contextMock.getFilesDir()).thenReturn(file);
         sut.addTeam(testTeamName, testCoachName);
+        TeamData teamData = sut.getTeam(testTeamName);
+        assertNotNull(teamData);
 
     }
-
+    @Test
+    public void addPolishTeam() throws Exception {
+        File file = new File("./");
+        when(contextMock.getFilesDir()).thenReturn(file);
+        String testPolishTeamName = "Kuźnia";
+        sut.addTeam(testPolishTeamName, testCoachName);
+        sut.removeTeam(testPolishTeamName);
+        TeamData teamData = sut.getTeam(testPolishTeamName);
+        assertNull(teamData);
+    }
     @Test
     public void getTeam() throws Exception{
         File file =  new File("./");
@@ -59,6 +71,25 @@ public class TeamDataUtilsTest {
         assertNotNull(teams);
         assertEquals(teams.size(), 4);
 
+    }
+
+    @Test
+    public void updateTeams() throws Exception {
+        File file =  new File("./");
+        when(contextMock.getFilesDir()).thenReturn(file);
+        //sut.addTeam(testTeamName, testCoachName);
+        TeamData teamData = sut.getTeam(testTeamName);
+        assertNotNull(teamData);
+        StudentData studentData = new StudentData();
+        studentData.name = "agatka";
+        studentData.surname = "kmmiecik";
+        studentData.setAge("03.05.2004");
+
+        teamData.addStudent(studentData);
+        sut.updateTeam(teamData);
+
+        teamData = sut.getTeam(testTeamName);
+        assertEquals(teamData.students.size(), 1);
     }
 
 }

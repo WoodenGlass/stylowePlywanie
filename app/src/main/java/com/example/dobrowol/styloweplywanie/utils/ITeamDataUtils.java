@@ -11,4 +11,6 @@ public interface ITeamDataUtils {
     List<TeamData> getTeams();
 
     void updateTeam(TeamData teamData);
+
+    void removeTeam(String teamName);
 }

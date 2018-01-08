@@ -64,13 +64,14 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
         intent.putExtra(KEY, teamName);
 
         context.startActivity(intent);
-
     }
     private void fetchStudents(String teamName)
     {
+        Log.d("DUPA", "fetchStudents "+teamName);
         teamData = teamUtils.getTeam(teamName);
-        Log.d("DUPA students ", Integer.toString(teamData.students.size()));
-        adapter.setItems(teamData.students);
+        if (teamData != null) {
+            adapter.setItems(teamData.students);
+        }
     }
 
     @Override
@@ -110,15 +111,21 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
             if(resultCode == Activity.RESULT_OK){
 
                 StudentData studentData = (StudentData) data.getExtras().getSerializable(AddStudentActivity.RETURNED_DATA_KEY);
-                teamData.addStudent(studentData);
-                Log.d("DUPA addStudent ", Integer.toString(teamData.students.size()));
-                TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
-                teamDataUtils.updateTeam(teamData);
-                fetchStudents(teamData.teamName);
-                String wasAddedString = getResources().getString(R.string.wasAdded);
-                Toast.makeText(this, "Student "
-                                +studentData.name+" "+wasAddedString,
-                        Toast.LENGTH_LONG).show();
+                if (studentData != null) {
+                    teamData.addStudent(studentData);
+                    Log.d("DUPA addStudent ", Integer.toString(teamData.students.size()));
+                    TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
+                    teamDataUtils.updateTeam(teamData);
+                    fetchStudents(teamData.teamName);
+                    String wasAddedString = getResources().getString(R.string.wasAdded);
+                    Toast.makeText(this, "Student "
+                                    + studentData.name + " " + wasAddedString,
+                            Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Log.d("DUPA", "nie ma studenta");
+                }
             }
         }
     }

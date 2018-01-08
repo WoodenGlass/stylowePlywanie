@@ -67,6 +67,13 @@ public class BinaryDataUtil implements IDataUtil {
         }
     }
 
+    @Override
+    public void removeTeam(String teamName) {
+        String filename = prefix + teamName+".xml";
+        File file = new File(context.getFilesDir(), filename);
+        file.delete();
+    }
+
     private File[] getFiles() {
         File dir = new File(context.getFilesDir(), ".");
         return dir.listFiles(new FilenameFilter() {

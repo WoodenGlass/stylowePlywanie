@@ -28,6 +28,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         this.imageLoader = imageLoader;
     }
+    public void removeItem(int position) {
+        TeamData teamData = items.get(position);
+        listener.onItemRemoved(teamData.teamName);
+        items.remove(position);
+        notifyItemRemoved(position);
+    }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View listItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_teamlistitem, parent, false);
@@ -36,11 +42,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.d("DUPA position ", String.valueOf(items.size()));
-        TeamData textAtPosition = items.get(position);
-        if (textAtPosition != null)
+        Log.d("DUPA size ", String.valueOf(items.size()));
+        TeamData teamAtPosition = items.get(position);
+        //holder.setPosition();
+        if (teamAtPosition != null)
         {
-            holder.fillView(textAtPosition, imageLoader);
+            holder.fillView(teamAtPosition, imageLoader);
         }
     }
 
@@ -56,5 +63,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<ViewHolder> {
     public interface ItemsSelectedListener
     {
         public void onItemSelected(TeamData item);
+
+        void onItemRemoved(String teamName);
+
+        void OnItem(int adapterPosition);
     }
 }

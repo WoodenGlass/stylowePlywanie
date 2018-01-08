@@ -33,6 +33,11 @@ public class TeamDataUtils implements ITeamDataUtils {
         saveTeamData(teamData);
     }
 
+    @Override
+    public void removeTeam(String teamName) {
+        dataUtil.removeTeam(teamName);
+    }
+
     private void saveTeamData(TeamData teamData) {
         dataUtil.saveTeamData(teamData);
     }

@@ -13,4 +13,6 @@ public interface IDataUtil {
     ArrayList<TeamData> getTeams();
 
     void clearCache();
+
+    void removeTeam(String teamName);
 }

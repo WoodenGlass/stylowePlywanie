@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -69,13 +70,18 @@ public class AddStudentActivity extends FragmentActivity implements View.OnClick
 
     private void addStudent() {
         StudentData studentData = new StudentData();
+        Log.d("DUPA", "addstudent activity 1");
         studentData.setName(String.valueOf(studentName.getText()));
         studentData.setSurname(String.valueOf(studentSurname.getText()));
         studentData.setAge(dateOfBirth);
-        Intent returnIntent = new Intent();
 
-        returnIntent.putExtra(RETURNED_DATA_KEY,studentData);
+        Intent returnIntent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(RETURNED_DATA_KEY, studentData);
+        returnIntent.putExtras(bundle);
+
         setResult(Activity.RESULT_OK,returnIntent);
+        Log.d("DUPA", "addstudent activity 2");
         finish();
     }
 

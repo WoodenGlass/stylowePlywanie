@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,12 +26,13 @@ import java.util.List;
  * Created by dobrowol on 27.03.17.
  */
 
-public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.ItemsSelectedListener {
+public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.ItemsSelectedListener{
     private static final int ADD_TEAM_REQUEST = 1;
     private ItemsAdapter adapter;
     private RecyclerView itemsView;
     private List<TeamData> items;
     private TeamDataUtils teamUtils;
+    private int teamToRemove;
 
 
     @Override
@@ -43,9 +45,10 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
 
         itemsView = (RecyclerView) findViewById(R.id.items_view);
         itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-
+        //registerForContextMenu(itemsView);
         adapter = new ItemsAdapter(this, Picasso.with(this));
         itemsView.setAdapter(adapter);
+
         teamUtils = new TeamDataUtils(getApplicationContext());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -66,6 +69,18 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
     public void onItemSelected(TeamData item) {
         fetchTeam(item.getTeamName());
     }
+
+    @Override
+    public void onItemRemoved(String teamName) {
+        Log.d("DUPA teamName ", teamName);
+        teamUtils.removeTeam(teamName);
+    }
+
+    @Override
+    public void OnItem(int adapterPosition) {
+        teamToRemove = adapterPosition;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -93,7 +108,23 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
         // Show user only contacts w/ phone numbers
         startActivityForResult(intent, ADD_TEAM_REQUEST);
     }
+    /*@Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        //menu.add(0, v.getId(), 0, "Delete");
+        Log.d("DUPA", "menu");
+        if (v.getId()==R.id.items_view) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.long_click_menu, menu);
+        }
+    }*/
     @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Log.d("DUPA", item.getTitle().toString());
+        adapter.removeItem(teamToRemove);
+    return true;
+    }
+
+        @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ADD_TEAM_REQUEST) {
             if(resultCode == Activity.RESULT_OK){
