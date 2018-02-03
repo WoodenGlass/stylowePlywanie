@@ -43,6 +43,8 @@ dependencies {
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
+
 }
 
 

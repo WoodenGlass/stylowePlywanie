@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.dobrowol.styloweplywanie.R;
-import com.example.dobrowol.styloweplywanie.teammanagement.StudentsActivity;
+import com.example.dobrowol.styloweplywanie.teammanagement.TrainingManager;
 import com.example.dobrowol.styloweplywanie.utils.ItemsAdapter;
 import com.example.dobrowol.styloweplywanie.utils.TeamData;
 import com.example.dobrowol.styloweplywanie.utils.TeamDataUtils;
@@ -63,7 +63,8 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
     private void fetchTeam(String teamName) {
         TeamData teamData = teamUtils.getTeam(teamName);
         //TeamDetailsActivity.startDetailsActivity(teamData, JoinTeamActivity.this);
-        StudentsActivity.startActivity(teamName, JoinTeamActivity.this);
+        //StudentsActivity.startActivity(teamName, JoinTeamActivity.this);
+        TrainingManager.startActivity(teamName, JoinTeamActivity.this);
     }
     @Override
     public void onItemSelected(TeamData item) {

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.dobrowol.styloweplywanie.R;
+import com.example.dobrowol.styloweplywanie.utils.StudentAchievementActivity;
 import com.example.dobrowol.styloweplywanie.utils.StudentAdapter;
 import com.example.dobrowol.styloweplywanie.utils.StudentData;
 import com.example.dobrowol.styloweplywanie.utils.TeamData;
@@ -67,16 +68,19 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
     }
     private void fetchStudents(String teamName)
     {
-        Log.d("DUPA", "fetchStudents "+teamName);
         teamData = teamUtils.getTeam(teamName);
         if (teamData != null) {
             adapter.setItems(teamData.students);
         }
     }
-
+    private void fetchStudent(String studentDataFile) {
+        Log.d("DUPA", "fetchStudent");
+        //TeamDetailsActivity.startDetailsActivity(teamData, JoinTeamActivity.this);
+        StudentAchievementActivity.startActivity(studentDataFile, StudentsActivity.this);
+    }
     @Override
     public void onItemSelected(StudentData item) {
-        fetchStudents(item.name);
+        fetchStudent(item.dataFile);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,7 +117,6 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
                 StudentData studentData = (StudentData) data.getExtras().getSerializable(AddStudentActivity.RETURNED_DATA_KEY);
                 if (studentData != null) {
                     teamData.addStudent(studentData);
-                    Log.d("DUPA addStudent ", Integer.toString(teamData.students.size()));
                     TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
                     teamDataUtils.updateTeam(teamData);
                     fetchStudents(teamData.teamName);
