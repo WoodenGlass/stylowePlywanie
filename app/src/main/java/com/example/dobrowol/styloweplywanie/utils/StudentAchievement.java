@@ -1,10 +1,5 @@
 package com.example.dobrowol.styloweplywanie.utils;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Created by dobrowol on 01.02.18.
  */
@@ -18,16 +13,32 @@ public class StudentAchievement {
     public Float strokeIndex;
     void calculateStrokeIndex()
     {
-        DateFormat formatter = new SimpleDateFormat("mm:ss.SSS");
-        try {
-            Date date = formatter.parse(time);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Integer ms = Integer.valueOf(time);
+        int s = time2seconds(time);
+
+        distance = distance.replace("m", "");
         Float d = Float.valueOf(distance);
         Float stc = Float.valueOf(strokeCount);
-        strokeIndex = d/ms *((d/stc));
+        strokeIndex = d/s *((d/stc));
     }
-
+    int time2seconds(String time)
+    {
+        int [] factor=
+                {
+                    600,
+                    60,
+                    10,
+                    1
+                };
+        int seconds =  0;
+        int index = 0;
+        for (char i : time.toCharArray())
+        {
+            if (index >= factor.length)
+                break;
+            if (i <= '9' && i >= '0') {
+                seconds += (i - '0') * factor[index++];
+            }
+        }
+        return seconds;
+    }
 }

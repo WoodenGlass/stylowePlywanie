@@ -69,13 +69,13 @@ public class StudentAchievementActivity extends AppCompatActivity implements Vie
         Integer distance = Integer.valueOf(distanceET.getText().toString());
         Integer strokeCount = Integer.valueOf(strokeCountEt.getText().toString());
 
-        CsvDataUtil csvDataUtil = new CsvDataUtil(getApplicationContext());
+        CsvDataUtils csvDataUtils = new CsvDataUtils(getApplicationContext());
         StudentAchievement sa = new StudentAchievement();
         sa.time = timeET.getText().toString();
         sa.strokeCount = strokeCountEt.getText().toString();
         sa.distance = distanceET.getText().toString();
         sa.date = dateEt.getText().toString();
-        csvDataUtil.saveStudentAchievement(sa, dataFile);
+        csvDataUtils.saveStudentAchievement(sa, dataFile);
 
     }
 }

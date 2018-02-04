@@ -3,41 +3,38 @@ package com.example.dobrowol.styloweplywanie.utils;
 import android.content.Context;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
  * Created by dobrowol on 01.02.18.
  */
 
-public class CsvDataUtil {
+public class CsvDataUtils {
     private Context context;
 
-    public CsvDataUtil(Context context)
+    public CsvDataUtils(Context context)
     {
         this.context = context;
     }
 
     public void saveStudentAchievement(StudentAchievement data, String dataFile)
     {
-        try
-        {
-            FileWriter fw = new FileWriter(dataFile, true);
-
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw);
+            data.calculateStrokeIndex();
             String outputString = data.date + "," + data.style + "," + data.distance + ","+data.time+","+data.strokeCount+","+data.strokeIndex;
+            FileOutputStream outputStream;
 
-            out.println(outputString);
+            try {
+                outputStream = context.openFileOutput(dataFile, Context.MODE_PRIVATE);
+                outputStream.write(outputString.getBytes());
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        } catch (IOException e) {
-            //exception handling left as an exercise for the reader
-        }
 
 
 

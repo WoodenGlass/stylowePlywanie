@@ -7,24 +7,32 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dobrowol.styloweplywanie.R;
+import com.example.dobrowol.styloweplywanie.utils.CsvDataUtils;
 import com.example.dobrowol.styloweplywanie.utils.StudentAchievement;
 import com.example.dobrowol.styloweplywanie.utils.StudentData;
 import com.example.dobrowol.styloweplywanie.utils.TeamData;
 import com.example.dobrowol.styloweplywanie.utils.TeamDataUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +43,7 @@ import java.util.Map;
  */
 
 public class TrainingManager extends AppCompatActivity implements View.OnClickListener {
+    private static final int ADD_TEAM_REQUEST = 1;
     private static final String KEY = "TeamName";
     private String currentTime;
     private Button btnStart;
@@ -58,7 +67,36 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     private String selectedTime;
     private String fileToSave;
     private StudentAchievement currentStudentAchievement;
+    Spinner spnr;
+    Spinner spnrDistance;
+    Spinner spnrStrokeCount;
+    Button btnSave;
 
+
+    String[] styles = {
+            "kraul",
+            "grzbiet",
+            "delfin",
+            "żabka",
+            "NN kraul",
+            "NN delfin",
+            "NN żabka",
+            "NN grzbiet",
+            "NN delfin pod wodą",
+            "NN delfin na plecach pod wodą"
+    };
+
+    String[] distances = {
+      "25m",
+            "50m",
+            "5m",
+            "15m",
+            "100m",
+            "200m",
+            "400m",
+            "1500m"
+    };
+    ArrayList<String> strokeCount;
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trainingmanager);
@@ -91,8 +129,125 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         listView = (ListView)findViewById(R.id.listview1);
         listView.setAdapter(adapter);
         listView.setOnCreateContextMenuListener(this);
-    }
 
+        spnr = (Spinner)findViewById(R.id.tmSpinner);
+        spnrDistance = (Spinner)findViewById(R.id.tmDistanceSpinner);
+        spnrStrokeCount = (Spinner)findViewById(R.id.tmStrokeCountSpinner);
+        setupSpinner();
+        btnSave = (Button) findViewById(R.id.btnSaveAchievement);
+        btnSave.setOnClickListener(this);
+        currentStudentAchievement = new StudentAchievement();
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+    }
+    private void setupSpinner()
+    {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, styles);
+
+        spnr.setAdapter(adapter);
+        spnr.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+
+                        int position = spnr.getSelectedItemPosition();
+                        currentStudentAchievement.style = styles[+position];
+                        Toast.makeText(getApplicationContext(),"You have selected "+styles[+position],Toast.LENGTH_SHORT).show();
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                });
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, distances);
+
+        spnrDistance.setAdapter(adapter1);
+        spnrDistance.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+
+                        int position = spnrDistance.getSelectedItemPosition();
+                        currentStudentAchievement.distance = distances[+position];
+                        Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                });
+        strokeCount = new ArrayList<>();
+        for (int i =0; i < 100; i++)
+        {
+            strokeCount.add(String.valueOf(i));
+        }
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, strokeCount);
+
+        spnrStrokeCount.setAdapter(adapter2);
+        spnrStrokeCount.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+
+                        int position = spnrStrokeCount.getSelectedItemPosition();
+                        currentStudentAchievement.strokeCount = strokeCount.get(+position);
+                        Toast.makeText(getApplicationContext(),"You have selected "+strokeCount.get(+position),Toast.LENGTH_SHORT).show();
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_jointeam, menu);
+
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_addTeam:
+                showAddStudent();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    private void showAddStudent() {
+        Intent intent = new Intent(this, AddStudentActivity.class);
+
+        //Intent pickContactIntent = new Intent(Intent.ACTION_PICK, ));
+        // Show user only contacts w/ phone numbers
+        startActivityForResult(intent, ADD_TEAM_REQUEST);
+    }
     private void fetchTeam(String teamName) {
         TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
         teamData = teamDataUtils.getTeam(teamName);
@@ -114,6 +269,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         int position = info.position;
         selectedTime = (String) listView.getItemAtPosition(position);
+        currentStudentAchievement.time = (String) listView.getItemAtPosition(position);
         for (StudentData student : teamData.students) {
             menu.add(0, v.getId(), 0, student.name+" "+student.surname);
         }
@@ -133,9 +289,9 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         switch (v.getId())
         {
             case R.id.btnStart:
-                if (StartTime == 0) {
+
                     StartTime = SystemClock.uptimeMillis();
-                }
+
                 handler.postDelayed(runnable, 0);
                 btnReset.setEnabled(true);
                 btnStop.setEnabled(true);
@@ -179,6 +335,13 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 adapter.notifyDataSetChanged();
 
                 break;
+            case R.id.btnSaveAchievement:
+                CsvDataUtils csvDataUtils = new CsvDataUtils(getApplicationContext());
+
+                currentStudentAchievement.date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+                csvDataUtils.saveStudentAchievement(currentStudentAchievement, fileToSave);
+                Toast.makeText(getApplicationContext(),"Saved to "+fileToSave,Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 
@@ -201,8 +364,6 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
     private void formatTime(long startTime, long endTime) {
          MillisecondTime = endTime - startTime;
-
-        UpdateTime = TimeBuff + MillisecondTime;
 
         Seconds = (int) (MillisecondTime / 1000);
 
