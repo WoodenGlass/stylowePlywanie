@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.utils.CsvDataUtils;
@@ -50,7 +49,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     private Button btnLap;
     private Button btnStop;
     private Button btnReset;
-    TextView mTimerView, mStudentName;
+    TextView mTimerView, mStudentName, mStrokeIndex;
     int Seconds, Minutes, MilliSeconds ;
     long MillisecondTime, StartTime =0L, TimeBuff, UpdateTime = 0L ;
     Handler handler;
@@ -58,8 +57,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     Long[] startedListElements = new Long[]{};
     LinkedList<Long> startedTimer;
     List<Long> stoppedTimer;
-    List<String> ListElementsArrayList ;
-    ArrayAdapter<String> adapter ;
+    ArrayList<CharSequence> ListElementsArrayList ;
+    ArrayAdapter<CharSequence> adapter ;
     ListView listView;
     TeamData teamData;
     Map studentToStudentData;
@@ -114,6 +113,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         btnReset.setOnClickListener(this);
         mTimerView = (TextView) findViewById(R.id.tvTimer);
         mStudentName = (TextView) findViewById(R.id.tvStudentName);
+        mStrokeIndex = (TextView) findViewById(R.id.tvSrokeIndex);
 
         btnReset.setEnabled(false);
         btnStop.setEnabled(false);
@@ -121,8 +121,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
         handler = new Handler() ;
         startedTimer = new LinkedList<Long>(Arrays.asList(startedListElements));
-        ListElementsArrayList = new ArrayList<String>(Arrays.asList(ListElements));
-        adapter = new ArrayAdapter<String>(TrainingManager.this,
+        ListElementsArrayList = new ArrayList<CharSequence>(Arrays.asList(ListElements));
+        adapter = new ArrayAdapter<CharSequence>(TrainingManager.this,
                 android.R.layout.simple_list_item_1,
                 ListElementsArrayList
         );
@@ -142,6 +142,11 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(myToolbar);
 
     }
+    private void updateStrokeIndex()
+    {
+        currentStudentAchievement.calculateStrokeIndex();
+        mStrokeIndex.setText("StrokeIndex: " + currentStudentAchievement.strokeIndex.toString());
+    }
     private void setupSpinner()
     {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -157,7 +162,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
                         int position = spnr.getSelectedItemPosition();
                         currentStudentAchievement.style = styles[+position];
-                        Toast.makeText(getApplicationContext(),"You have selected "+styles[+position],Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(),"You have selected "+styles[+position],Toast.LENGTH_SHORT).show();
                         // TODO Auto-generated method stub
                     }
 
@@ -181,7 +186,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
                         int position = spnrDistance.getSelectedItemPosition();
                         currentStudentAchievement.distance = distances[+position];
-                        Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
+                        updateStrokeIndex();
+                        //Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
                         // TODO Auto-generated method stub
                     }
 
@@ -210,7 +216,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
                         int position = spnrStrokeCount.getSelectedItemPosition();
                         currentStudentAchievement.strokeCount = strokeCount.get(+position);
-                        Toast.makeText(getApplicationContext(),"You have selected "+strokeCount.get(+position),Toast.LENGTH_SHORT).show();
+                        updateStrokeIndex();
+                        //Toast.makeText(getApplicationContext(),"You have selected "+strokeCount.get(+position),Toast.LENGTH_SHORT).show();
                         // TODO Auto-generated method stub
                     }
 
@@ -242,11 +249,16 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         }
     }
     private void showAddStudent() {
-        Intent intent = new Intent(this, AddStudentActivity.class);
-
+        Intent intent = new Intent(this, StudentsActivity.class);
+        intent.putExtra(KEY, teamData.teamName);
         //Intent pickContactIntent = new Intent(Intent.ACTION_PICK, ));
         // Show user only contacts w/ phone numbers
         startActivityForResult(intent, ADD_TEAM_REQUEST);
+        //StudentsActivity.startActivity(teamData.teamName, TrainingManager.this);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        fetchTeam(teamData.teamName);
     }
     private void fetchTeam(String teamName) {
         TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
@@ -280,6 +292,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         Log.d("DUPA", item.getTitle().toString());
         StudentData student = (StudentData) studentToStudentData.get(item.getTitle().toString());
         mStudentName.setText(item.getTitle().toString()+" "+(String)(selectedTime));
+        updateStrokeIndex();
         fileToSave = student.dataFile;
         return true;
     }
@@ -305,6 +318,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 adapter.notifyDataSetChanged();
                 break;
             case R.id.btnReset:
+                startedTimer.clear();
+                handler.removeCallbacks(runnable);
                 MillisecondTime = 0L ;
                 StartTime = 0L ;
                 TimeBuff = 0L ;
@@ -319,6 +334,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 btnReset.setEnabled(false);
                 btnStop.setEnabled(false);
                 btnLap.setEnabled(false);
+                mStrokeIndex.setText("StrokeIndex: 0.0");
+                mStudentName.setText("");
                 break;
             case R.id.btnStop:
                 long stopTime = SystemClock.uptimeMillis();
@@ -340,7 +357,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
                 currentStudentAchievement.date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
                 csvDataUtils.saveStudentAchievement(currentStudentAchievement, fileToSave);
-                Toast.makeText(getApplicationContext(),"Saved to "+fileToSave,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"Saved to "+fileToSave,Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -375,5 +392,31 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         currentTime = "" + String.format("%02d", Minutes) + ":"
                 + String.format("%02d", Seconds) + ":"
                 + String.format("%03d", MilliSeconds);
+    }
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("DUPA"," saveInstance");
+        outState.putInt("strokeCount", spnrStrokeCount.getSelectedItemPosition());
+        outState.putInt("distance", spnrDistance.getSelectedItemPosition());
+        outState.putInt("style", spnr.getSelectedItemPosition());
+        outState.putCharSequenceArrayList("listOfElementsArray", ListElementsArrayList);
+        outState.putString("currentTime", mTimerView.getText().toString());
+        outState.putSerializable("currentStudentAchievement", currentStudentAchievement);
+        outState.putString("studentName", mStudentName.getText().toString());
+
+
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d("DUPA"," restoreInstance");
+        spnrStrokeCount.setSelection(savedInstanceState.getInt("strokeCount"));
+        spnrDistance.setSelection(savedInstanceState.getInt("distance"));
+        spnr.setSelection(savedInstanceState.getInt("style"));
+        ListElementsArrayList = savedInstanceState.getCharSequenceArrayList("listOfElementsArray");
+        currentStudentAchievement = (StudentAchievement) savedInstanceState.getSerializable("currentStudentAchievement");
+        updateStrokeIndex();
+        mStudentName.setText(savedInstanceState.getString("studentName"));
+        mTimerView.setText(savedInstanceState.getString("currentTime"));
     }
 }

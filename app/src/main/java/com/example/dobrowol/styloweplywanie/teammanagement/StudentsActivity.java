@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.dobrowol.styloweplywanie.R;
-import com.example.dobrowol.styloweplywanie.utils.StudentAchievementActivity;
+import com.example.dobrowol.styloweplywanie.teammanagement.trainingdetails.StudentAchievementChartActivity;
 import com.example.dobrowol.styloweplywanie.utils.StudentAdapter;
 import com.example.dobrowol.styloweplywanie.utils.StudentData;
 import com.example.dobrowol.styloweplywanie.utils.TeamData;
@@ -76,7 +76,8 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
     private void fetchStudent(String studentDataFile) {
         Log.d("DUPA", "fetchStudent");
         //TeamDetailsActivity.startDetailsActivity(teamData, JoinTeamActivity.this);
-        StudentAchievementActivity.startActivity(studentDataFile, StudentsActivity.this);
+        //StudentAchievementActivity.startActivity(studentDataFile, StudentsActivity.this);
+        StudentAchievementChartActivity.startActivity(studentDataFile, StudentsActivity.this);
     }
     @Override
     public void onItemSelected(StudentData item) {

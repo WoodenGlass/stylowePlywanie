@@ -60,9 +60,7 @@
 
         </activity>
         <activity android:name=".teammanagement.StudentsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".welcome.JoinTeamActivity" />
+
 
         </activity>
         <activity android:name=".teammanagement.TrainingManager">
@@ -70,11 +68,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".welcome.JoinTeamActivity"/>
         </activity>
+        <activity android:name=".teammanagement.trainingdetails.StudentAchievementChartActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".teammanagement.StudentsActivity"/>
+        </activity>
         <activity android:name=".teammanagement.AddStudentActivity"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".teammanagement.TeamDetailsActivity" />
+                android:value=".teammanagement.StudentsActivity" />
 
         </activity>
         <activity android:name=".teammanagement.AddTrainingActivity">

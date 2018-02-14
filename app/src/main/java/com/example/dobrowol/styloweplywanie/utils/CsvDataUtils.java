@@ -3,10 +3,12 @@ package com.example.dobrowol.styloweplywanie.utils;
 import android.content.Context;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -26,25 +28,27 @@ public class CsvDataUtils {
             data.calculateStrokeIndex();
             String outputString = data.date + "," + data.style + "," + data.distance + ","+data.time+","+data.strokeCount+","+data.strokeIndex;
             FileOutputStream outputStream;
+        try {
+            outputStream = context.openFileOutput(dataFile, Context.MODE_APPEND);
 
-            try {
-                outputStream = context.openFileOutput(dataFile, Context.MODE_PRIVATE);
-                outputStream.write(outputString.getBytes());
-                outputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-
+            PrintWriter pw = new PrintWriter(outputStream);
+            pw.append(outputString);
+            pw.println();
+            pw.flush();
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
+
     public ArrayList<StudentAchievement> getStudentAchievements(String dataFile)
     {
         ArrayList<StudentAchievement> achievements = new ArrayList<>();
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(dataFile));
+            File file = new File(context.getFilesDir(), dataFile);
+            br = new BufferedReader(new FileReader(file));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

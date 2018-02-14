@@ -1,27 +1,39 @@
 package com.example.dobrowol.styloweplywanie.utils;
 
+import java.io.Serializable;
+
 /**
  * Created by dobrowol on 01.02.18.
  */
 
-public class StudentAchievement {
+public class StudentAchievement implements Serializable {
     public String style;
     public String distance;
     public String strokeCount;
     public String time;
     public String date;
     public Float strokeIndex;
-    void calculateStrokeIndex()
+    public void calculateStrokeIndex()
     {
         int s = time2seconds(time);
 
+        if (distance == null) {
+            strokeIndex = Float.valueOf(0);
+            return;
+        }
         distance = distance.replace("m", "");
         Float d = Float.valueOf(distance);
         Float stc = Float.valueOf(strokeCount);
-        strokeIndex = d/s *((d/stc));
+        if (s > 0 && stc > 0) {
+            strokeIndex = d / s * ((d / stc));
+        }
+        else
+            strokeIndex = Float.valueOf(0);
     }
     int time2seconds(String time)
     {
+        if (time == null)
+            return 0;
         int [] factor=
                 {
                     600,

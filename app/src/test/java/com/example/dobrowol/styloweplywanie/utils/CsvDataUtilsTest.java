@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class CsvDataUtilsTest {
     private String testCoachName = "Treneiro";
     private String testTeamName = "Narwale";
-    private String testFile = "agatkakmiecik.csv";
+    private String testFile = "AgataKmiecik.csv";
     @Mock
     Context contextMock;
     @InjectMocks
@@ -32,16 +32,22 @@ public class CsvDataUtilsTest {
 
     @Test
     public void saveAchievement() throws Exception {
-        FileOutputStream outputStream = new FileOutputStream(new File("./",testFile));
-        when(contextMock.openFileOutput(testFile, Context.MODE_PRIVATE)).thenReturn(outputStream);
+        FileOutputStream outputStream = new FileOutputStream(new File("./",testFile), true);
+        when(contextMock.openFileOutput(testFile, Context.MODE_APPEND)).thenReturn(outputStream);
         StudentAchievement sa = new StudentAchievement();
         sa.date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-        sa.strokeCount = "12";
+        sa.strokeCount = "14";
         sa.time = "00:15.000";
         sa.style = "kraul";
         sa.distance = "25m";
         sut.saveStudentAchievement(sa, testFile);
-
+        StudentAchievement sa2 = new StudentAchievement();
+        sa2.date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+        sa2.strokeCount = "13";
+        sa2.time = "00:15.000";
+        sa2.style = "kraul";
+        sa2.distance = "25m";
+        sut.saveStudentAchievement(sa2, testFile);
 
     }
 }

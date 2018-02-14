@@ -105,10 +105,11 @@ public class XMLDataUtil implements IDataUtil {
                 age.appendChild(doc.createTextNode(studentData.age));
                 student.appendChild(age);
                 studentData.dataFile = studentData.name+studentData.surname+".csv";
+                //studentData.dataFile = studentData.dataFile.toLowerCase();
                 createDataFile(studentData.dataFile);
                 Element dataFile = doc.createElement("dataFile");
-                age.appendChild(doc.createTextNode(studentData.dataFile));
-                student.appendChild(age);
+                dataFile.appendChild(doc.createTextNode(studentData.dataFile));
+                student.appendChild(dataFile);
                 students.appendChild(student);
             }
             rootElement.appendChild(students);
@@ -202,6 +203,7 @@ public class XMLDataUtil implements IDataUtil {
                 else
                 {
                     studentData.dataFile = studentData.name+studentData.surname+".csv";
+                    //studentData.dataFile = studentData.dataFile.toLowerCase();
                     createDataFile(studentData.dataFile);
                 }
                 teamData.addStudent(studentData);
