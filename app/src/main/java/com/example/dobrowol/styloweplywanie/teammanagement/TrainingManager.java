@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -140,6 +141,10 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.screenBrightness = 1;
+        getWindow().setAttributes(params);
 
     }
     private void updateStrokeIndex()

@@ -64,7 +64,14 @@ public class CsvDataUtils {
                 sa.distance = tokens[2];
                 sa.time = tokens[3];
                 sa.strokeCount = tokens[4];
-                sa.strokeIndex = Float.valueOf(tokens[5]);
+                try {
+                    sa.strokeIndex = Float.valueOf(tokens[5]);
+                }
+                catch (NumberFormatException nfe)
+                {
+                    System.out.print("NumberFormatException: "+nfe.getMessage());
+                    sa.strokeIndex = 0.0f;
+                }
                 achievements.add(sa);
                 line = br.readLine();
             }
