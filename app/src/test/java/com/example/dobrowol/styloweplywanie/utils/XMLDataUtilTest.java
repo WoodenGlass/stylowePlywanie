@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 /**
@@ -35,6 +36,10 @@ public class XMLDataUtilTest {
         studentData.setAge("26.05.2007");
         studentData.surname = "Mąka";
         teamData.addStudent(studentData);
+        teamData.styles.add("kraul");
+        teamData.styles.add("żabka");
+        teamData.distances.add("100m");
+        teamData.distances.add("50m");
         sut.saveTeamData(teamData);
 
     }
@@ -51,6 +56,8 @@ public class XMLDataUtilTest {
         assertEquals(studentData.name, "Bartek");
         assertEquals(studentData.surname, "Mąka");
         assertEquals(studentData.age, "26.05.2007");
+        assertEquals(teamData.styles.size(),2);
+        assertTrue(teamData.students.contains("kraul"));
 
     }
 

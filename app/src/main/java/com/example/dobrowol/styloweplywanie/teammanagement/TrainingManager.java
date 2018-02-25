@@ -78,6 +78,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
             "grzbiet",
             "delfin",
             "żabka",
+            "zmienny",
             "NN kraul",
             "NN delfin",
             "NN żabka",

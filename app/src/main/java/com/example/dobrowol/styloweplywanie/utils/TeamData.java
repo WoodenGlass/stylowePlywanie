@@ -14,6 +14,8 @@ public class TeamData implements Serializable{
     public String coachName;
     public ArrayList<StudentData> students;
     public Map<Date, ArrayList<TrainingData>> trainings;
+    public ArrayList<String> styles;
+    public ArrayList<String> distances;
 
     TeamData(String team, String coach)
     {
@@ -21,6 +23,8 @@ public class TeamData implements Serializable{
         coachName = coach;
         students = new ArrayList<StudentData>();
         trainings = new HashMap<>();
+        styles = new ArrayList<>();
+        distances = new ArrayList<>();
     }
     public void addCoach(String text) {
 

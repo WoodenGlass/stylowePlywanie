@@ -13,12 +13,19 @@ import android.widget.Spinner;
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.utils.CsvDataUtils;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +42,9 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
     private String dataFile;
     private static final String KEY = "DataFile";
     private Spinner labelSpinner;
+    private ArrayList<String> currentXaxisLabels;
+    private Map<Integer, StudentAchievementUtils.Key> positionToKey;
+    private Map<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>> achievementsMap;
 
 
     @Override
@@ -53,6 +63,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
         if (intent != null & intent.hasExtra(KEY)) {
             dataFile= intent.getExtras().getString(KEY);
         }
+        currentXaxisLabels = new ArrayList<>();
         fetchStudentAchievement();
 
     }
@@ -70,7 +81,10 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
         x.setEnabled(true);
         x.setDrawGridLines(false);
         x.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
-        x.setLabelCount(5);
+        x.setLabelCount(dataSet.getEntryCount());
+        x.setLabelRotationAngle(45);
+        x.setValueFormatter(new MyXAxisValueFormatter(currentXaxisLabels));
+
         YAxis y = lineChart.getAxisLeft();
         y.setEnabled(true);
         y.setDrawGridLines(false);
@@ -84,18 +98,38 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
 
         context.startActivity(intent);
     }
+    private LineDataSet getLineDataSet(Map<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>> achievementsMap, int position)
+    {
+        LineDataSet lineDataSet;
+        StudentAchievementUtils.Key k = positionToKey.get(position);
+        List<StudentAchievementUtils.Value> values = achievementsMap.get(positionToKey.get(position));
+
+        List<Entry> entries = new ArrayList<Entry>();
+
+        int i = 0;
+            // turn your data into Entry objects
+        for (StudentAchievementUtils.Value v : values) {
+            entries.add(new Entry(i++, Float.valueOf(v.strokeIndex)));
+            currentXaxisLabels.add(v.date);
+        }
+
+        lineDataSet =  new LineDataSet(entries, "Stroke index of " + k.style + " " + k.distance);
+
+        return lineDataSet;
+    }
     private void fetchStudentAchievement()
     {
-        Map<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>> achievementsMap;
         achievementsMap = studentAchievementUtils.fetchStudentAchievement( getApplicationContext(), dataFile);
-        final List<LineDataSet> lineDataSets = studentAchievementUtils.getLineDataSets(achievementsMap);
         //LineDataSet dataSet = lineDataSets.get(0);
         //for (LineDataSet dataSet : lineDataSets){
         //Toast.makeText(getApplicationContext(), dataSet.getLabel()+" "+dataSet.getEntryCount(), Toast.LENGTH_SHORT).show();
 
-        ArrayList<String> labels = new ArrayList<>(lineDataSets.size());
-        for (LineDataSet dataSet : lineDataSets){
-            labels.add(dataSet.getLabel());
+        ArrayList<String> labels = new ArrayList<>();
+        positionToKey = new HashMap<>();
+        int i = 0;
+        for (StudentAchievementUtils.Key key : achievementsMap.keySet()){
+            labels.add("Stroke index of " + key.style + " " + key.distance);
+            positionToKey.put(i++, key);
         }
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, labels);
@@ -109,7 +143,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
                                                int arg2, long arg3) {
 
                         int position = labelSpinner.getSelectedItemPosition();
-                        drawLineChart(lineDataSets.get(+position));
+                        drawLineChart(getLineDataSet(achievementsMap,position));
 
                         //Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
                         // TODO Auto-generated method stub
@@ -122,7 +156,35 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
                     }
 
                 });
-            drawLineChart(lineDataSets.get(0));
+
         //}
+    }
+
+    public class MyXAxisValueFormatter implements IAxisValueFormatter {
+
+        private List<String> mValues;
+
+        public MyXAxisValueFormatter(List<String> values) {
+            this.mValues = values;
+        }
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            // "value" represents the position of the label on the axis (x or y)
+            int index = (int)value;
+            String fValue="";
+            if (index >=0 && index < mValues.size()) {
+                Date date;
+                try {
+                    date = new SimpleDateFormat("yyyyMMdd_HHmmss").parse(mValues.get((int) value));
+                    fValue = new SimpleDateFormat("yyyy/MM/dd").format(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            return fValue;
+        }
+
+
     }
 }

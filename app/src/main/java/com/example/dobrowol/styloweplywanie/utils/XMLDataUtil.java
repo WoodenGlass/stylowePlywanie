@@ -113,6 +113,22 @@ public class XMLDataUtil implements IDataUtil {
                 students.appendChild(student);
             }
             rootElement.appendChild(students);
+
+            Element styles = doc.createElement("Styles");
+            for (String style : teamData.styles) {
+                Element styleEl = doc.createElement("Style");
+                styleEl.appendChild(doc.createTextNode(style));
+                styles.appendChild(styleEl);
+            }
+            rootElement.appendChild(styles);
+
+            Element distances = doc.createElement("Distances");
+            for (String distance : teamData.distances) {
+                Element distanceEl = doc.createElement("Distance");
+                distanceEl.appendChild(doc.createTextNode(distance));
+                distances.appendChild(distanceEl);
+            }
+            rootElement.appendChild(distances);
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = null;
 
@@ -207,6 +223,15 @@ public class XMLDataUtil implements IDataUtil {
                     createDataFile(studentData.dataFile);
                 }
                 teamData.addStudent(studentData);
+            }
+            XPathExpression exprStyles = xpath.compile("/Team/Styles/Style");
+
+            //Double count = (Double) exprStudents.evaluate(doc, XPathConstants.NUMBER);
+            NodeList nodeStyles = (NodeList) exprStyles.evaluate(doc, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeStyles.getLength(); i++) {
+                Element el = (Element) nodeStyles.item(i);
+                teamData.styles.add(el.getTextContent());
             }
 
         } catch (XPathExpressionException e) {
