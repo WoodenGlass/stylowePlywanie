@@ -73,7 +73,6 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
 
     @Override
     public void onItemRemoved(String teamName) {
-        Log.d("DUPA teamName ", teamName);
         teamUtils.removeTeam(teamName);
     }
 

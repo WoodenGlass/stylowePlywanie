@@ -81,7 +81,12 @@
             android:text="save"
             android:id="@+id/btnSaveAchievement"/>
     </RelativeLayout>
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relativeLayout1"
+        android:id="@+id/relativeLayout2"
+        android:orientation="vertical">
     <Button
         android:text="Start"
         android:layout_width="match_parent"
@@ -112,6 +117,8 @@
         android:layout_below="@+id/btnStop"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
+        android:layout_weight="1"
         android:id="@+id/listview1"/>
+    </RelativeLayout>
 </LinearLayout>
 </RelativeLayout>

@@ -7,7 +7,7 @@ package com.example.dobrowol.styloweplywanie.utils;
 public class LanguageUtils {
     public static String removePolishSigns(String source)
     {
-        return source.replace("ź","z").replace("ż","z").replace("Ź","Z").replace("Ż", "Z").replace("ó","o").replace("Ó", "O").
-                replace("Ł","L").replace("ł","l").replace("ą","a").replace("Ą", "A").replace("Ć", "C").replace("ć","c");
+        return source.replace("ź","z").replaceAll("ż","z").replaceAll("Ź","Z").replaceAll("Ż", "Z").replaceAll("ó","o").replaceAll("Ó", "O").
+                replaceAll("Ł","L").replaceAll("ł","l").replaceAll("ą","a").replaceAll("Ą", "A").replaceAll("Ć", "C").replaceAll("ć","c");
     }
 }

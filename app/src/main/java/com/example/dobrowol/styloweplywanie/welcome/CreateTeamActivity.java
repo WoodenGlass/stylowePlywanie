@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.utils.ITeamDataUtils;
+import com.example.dobrowol.styloweplywanie.utils.LanguageUtils;
 import com.example.dobrowol.styloweplywanie.utils.TeamDataUtils;
 
 import org.junit.runner.RunWith;
@@ -59,7 +60,7 @@ public class CreateTeamActivity extends AppCompatActivity implements View.OnClic
                 editTextTeamName.setText("");
                 break;
             case R.id.button_CreateTeamActivity:
-                String teamName = editTextTeamName.getText().toString();
+                String teamName = LanguageUtils.removePolishSigns(editTextTeamName.getText().toString().replaceAll("\\s",""));
                 teamDataUtils.addTeam(teamName, String.valueOf(editTextCoachName.getText()));
 
                 finishWithResult(teamName);

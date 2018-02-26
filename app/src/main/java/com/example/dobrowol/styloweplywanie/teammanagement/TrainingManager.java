@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dobrowol.styloweplywanie.R;
 import com.example.dobrowol.styloweplywanie.utils.CsvDataUtils;
@@ -71,6 +72,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     Spinner spnrDistance;
     Spinner spnrStrokeCount;
     Button btnSave;
+    private int numberOfRunningStopwatch;
 
 
     String[] styles = {
@@ -105,6 +107,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         if (intent != null & intent.hasExtra(KEY)) {
             fetchTeam(intent.getExtras().getString(KEY));
         }
+        numberOfRunningStopwatch = 0;
         btnStart = (Button) findViewById(R.id.btnStart);
         btnLap = (Button) findViewById(R.id.btnLap);
         btnStop = (Button) findViewById(R.id.btnStop);
@@ -316,6 +319,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 btnStop.setEnabled(true);
                 btnLap.setEnabled(true);
                 startedTimer.add(StartTime);
+                numberOfRunningStopwatch++;
+                btnStop.setText("STOP ("+numberOfRunningStopwatch+")");
                 break;
             case R.id.btnLap:
 
@@ -356,6 +361,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 ListElementsArrayList.add(currentTime);
 
                 adapter.notifyDataSetChanged();
+                numberOfRunningStopwatch--;
+                btnStop.setText("STOP ("+numberOfRunningStopwatch+")");
 
                 break;
             case R.id.btnSaveAchievement:
@@ -420,6 +427,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         spnrDistance.setSelection(savedInstanceState.getInt("distance"));
         spnr.setSelection(savedInstanceState.getInt("style"));
         ListElementsArrayList = savedInstanceState.getCharSequenceArrayList("listOfElementsArray");
+        Toast.makeText(getApplicationContext(),"number of elements in list " + ListElementsArrayList.size(),Toast.LENGTH_SHORT).show();
+        adapter.notifyDataSetChanged();
         currentStudentAchievement = (StudentAchievement) savedInstanceState.getSerializable("currentStudentAchievement");
         updateStrokeIndex();
         mStudentName.setText(savedInstanceState.getString("studentName"));

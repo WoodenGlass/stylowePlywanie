@@ -17,7 +17,7 @@ public class TeamDataUtils implements ITeamDataUtils {
     }
     @Override
     public TeamData addTeam(String teamName, String coachName) {
-        TeamData teamData = new TeamData(teamName, coachName);
+        TeamData teamData = new TeamData(LanguageUtils.removePolishSigns(teamName.replaceAll("\\s+","")), coachName);
         dataUtil.saveTeamData(teamData);
         return teamData;
     }
@@ -35,7 +35,7 @@ public class TeamDataUtils implements ITeamDataUtils {
 
     @Override
     public void removeTeam(String teamName) {
-        dataUtil.removeTeam(teamName);
+        dataUtil.removeTeam(LanguageUtils.removePolishSigns(teamName.replaceAll("\\s+","")));
     }
 
     private void saveTeamData(TeamData teamData) {
@@ -44,7 +44,7 @@ public class TeamDataUtils implements ITeamDataUtils {
 
     public TeamData getTeam(String teamName)
     {
-        return dataUtil.retrieveTeamData(teamName);
+        return dataUtil.retrieveTeamData(LanguageUtils.removePolishSigns(teamName.replaceAll("\\s+","")));
     }
 
     public void clearCache()
