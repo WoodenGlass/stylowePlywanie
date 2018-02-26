@@ -6,13 +6,13 @@
     android:layout_height="match_parent">
 
     <AutoCompleteTextView
-        android:text="Imie Ucznia"
+        android:hint="Imie Ucznia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/autocomplete_studentname" />
 
     <AutoCompleteTextView
-        android:text="Nazwisko Ucznia"
+        android:hint="Nazwisko Ucznia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/autocomplete_studentsurname" />
@@ -23,7 +23,7 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/editText_studentage"
-        android:text="Wiek" />
+        android:hint="Wiek" />
 
     <Button
         android:text="OK"
