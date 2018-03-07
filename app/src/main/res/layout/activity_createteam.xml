@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Nazwa Zespołu"
+        android:hint="Nazwa Zespołu"
         android:ems="10"
         android:id="@+id/editText_CreateTeamActivity_TeamName" />
 
@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Imie i Nazwisko Trenera"
+        android:hint="Imie i Nazwisko Trenera"
         android:ems="10"
         android:id="@+id/editText_CreateTeamActivity_CoachName" />
 

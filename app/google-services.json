@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:236904290998:android:4bc05cbf5991379d",
         "android_client_info": {
-          "package_name": "com.example.dobrowol.styloweplywanie"
+          "package_name": "dobrowol.styloweplywanie"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "236904290998-7ogottpc27ocf18qqae7qqu38uehp432.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.dobrowol.styloweplywanie",
+            "package_name": "dobrowol.styloweplywanie",
             "certificate_hash": "ce61b546191021f3f9b248cf8c1db70d67259818"
           }
         },

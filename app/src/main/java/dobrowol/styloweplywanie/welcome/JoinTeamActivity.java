@@ -13,14 +13,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
+import org.acra.annotation.ReportsCrashes;
+import org.acra.sender.HttpSender;
+
+import java.util.List;
+
 import dobrowol.styloweplywanie.R;
 import dobrowol.styloweplywanie.teammanagement.TrainingManager;
 import dobrowol.styloweplywanie.utils.ItemsAdapter;
 import dobrowol.styloweplywanie.utils.TeamData;
 import dobrowol.styloweplywanie.utils.TeamDataUtils;
-import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 /**
  * Created by dobrowol on 27.03.17.

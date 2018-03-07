@@ -4,11 +4,11 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.dobrowol.styloweplywanie"
+        applicationId "dobrowol.styloweplywanie"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -46,6 +46,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.2.0'
     compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    compile 'ch.acra:acra:4.6.1'
 }
 
 
