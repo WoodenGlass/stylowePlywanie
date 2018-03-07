@@ -23,13 +23,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import dobrowol.styloweplywanie.R;
-import dobrowol.styloweplywanie.utils.CsvDataUtils;
-import dobrowol.styloweplywanie.utils.StudentAchievement;
-import dobrowol.styloweplywanie.utils.StudentData;
-import dobrowol.styloweplywanie.utils.TeamData;
-import dobrowol.styloweplywanie.utils.TeamDataUtils;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +31,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import dobrowol.styloweplywanie.R;
+import dobrowol.styloweplywanie.utils.CsvDataUtils;
+import dobrowol.styloweplywanie.utils.StudentAchievement;
+import dobrowol.styloweplywanie.utils.StudentData;
+import dobrowol.styloweplywanie.utils.TeamData;
+import dobrowol.styloweplywanie.utils.TeamDataUtils;
 
 /**
  * Created by dobrowol on 08.01.18.
@@ -272,6 +272,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     private void fetchTeam(String teamName) {
         TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
         teamData = teamDataUtils.getTeam(teamName);
+        if (teamData == null)
+            return;
         studentToStudentData = new HashMap(teamData.students.size());
         for (StudentData student: teamData.students) {
             String studentName = student.name + " " + student.surname;
@@ -322,12 +324,15 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 numberOfRunningStopwatch++;
                 btnStop.setText("STOP ("+numberOfRunningStopwatch+")");
                 break;
-            case R.id.btnLap:
-
+            case R.id.btnLap: {
+                long stopTime = SystemClock.uptimeMillis();
+                long startTime = startedTimer.peekFirst();
+                formatTime(startTime, stopTime);
                 ListElementsArrayList.add(currentTime);
 
                 adapter.notifyDataSetChanged();
                 break;
+            }
             case R.id.btnReset:
                 startedTimer.clear();
                 handler.removeCallbacks(runnable);
