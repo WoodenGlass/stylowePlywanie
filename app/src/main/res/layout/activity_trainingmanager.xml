@@ -87,34 +87,94 @@
         android:layout_below="@+id/relativeLayout1"
         android:id="@+id/relativeLayout2"
         android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/relativeLayout3"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <Button
-        android:text="Start"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/button_states"
+
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:drawableTop="@drawable/ic_play_circle_outline_black_60dp"
+        android:background="@drawable/button_not_pressed"
         android:id="@+id/btnStart" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:layout_gravity="center"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <Button
-        android:text="Lap"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnStart"
+        android:drawableTop="@drawable/ic_playlist_add_black_60dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_not_pressed"
         android:id="@+id/btnLap" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lap"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <Button
-        android:text="Reset"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnLap"
+
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:drawableTop="@drawable/ic_clear_black_60dp"
+        android:background="@drawable/button_not_pressed"
+
         android:id="@+id/btnReset" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <Button
-        android:text="Stop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btnReset"
+
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:drawableTop="@drawable/ic_stop_black_60dp"
+        android:background="@drawable/button_not_pressed"
+
         android:id="@+id/btnStop" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stop"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </LinearLayout>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/btnStop"
+        android:layout_below="@+id/relativeLayout3"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:layout_weight="1"
