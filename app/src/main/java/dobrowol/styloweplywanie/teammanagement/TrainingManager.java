@@ -51,7 +51,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     private Button btnLap;
     private Button btnStop;
     private Button btnReset;
-    TextView mTimerView, mStudentName, mStrokeIndex;
+    TextView mTimerView, mStudentName, mStrokeIndex, mStopBtn;
     int Seconds, Minutes, MilliSeconds ;
     long MillisecondTime, StartTime =0L, TimeBuff, UpdateTime = 0L ;
     Handler handler;
@@ -119,6 +119,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         mTimerView = (TextView) findViewById(R.id.tvTimer);
         mStudentName = (TextView) findViewById(R.id.tvStudentName);
         mStrokeIndex = (TextView) findViewById(R.id.tvSrokeIndex);
+        mStopBtn = (TextView) findViewById(R.id.tvStopBtn);
 
         btnReset.setEnabled(false);
         btnStop.setEnabled(false);
@@ -322,7 +323,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 btnLap.setEnabled(true);
                 startedTimer.add(StartTime);
                 numberOfRunningStopwatch++;
-                btnStop.setText("STOP ("+numberOfRunningStopwatch+")");
+                mStopBtn.setText("STOP ("+numberOfRunningStopwatch+")");
                 break;
             case R.id.btnLap: {
                 long stopTime = SystemClock.uptimeMillis();
@@ -367,7 +368,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
                 adapter.notifyDataSetChanged();
                 numberOfRunningStopwatch--;
-                btnStop.setText("STOP ("+numberOfRunningStopwatch+")");
+                mStopBtn.setText("STOP ("+numberOfRunningStopwatch+")");
 
                 break;
             case R.id.btnSaveAchievement:
