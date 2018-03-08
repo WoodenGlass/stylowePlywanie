@@ -3,8 +3,8 @@
     package="dobrowol.styloweplywanie">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+ 
+    <uses-permission android:name="android.permission.INTERNET" />
 
 
     <application
