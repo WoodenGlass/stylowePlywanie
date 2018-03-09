@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import dobrowol.styloweplywanie.R;
-import dobrowol.styloweplywanie.teammanagement.trainingdetails.StudentAchievementChartActivity;
 import dobrowol.styloweplywanie.utils.StudentAdapter;
 import dobrowol.styloweplywanie.utils.StudentData;
 import dobrowol.styloweplywanie.utils.TeamData;

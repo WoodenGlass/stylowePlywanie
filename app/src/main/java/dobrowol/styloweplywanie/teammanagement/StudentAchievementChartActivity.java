@@ -1,4 +1,4 @@
-package dobrowol.styloweplywanie.teammanagement.trainingdetails;
+package dobrowol.styloweplywanie.teammanagement;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import dobrowol.styloweplywanie.R;
+import dobrowol.styloweplywanie.teammanagement.trainingdetails.StudentAchievementUtils;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -28,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static dobrowol.styloweplywanie.R.id.chart;
 
@@ -56,13 +58,15 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
         labelSpinner = (Spinner) findViewById(R.id.labelsSpinner);
          // add entries to dataset
         //dataSet.setColor(0x2db82d);
-
+        studentAchievementUtils = null;
         //dataSet.setValueTextColor(0xFFFA);
-        studentAchievementUtils = new StudentAchievementUtils(new CsvDataUtils(getApplicationContext()));
+
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
             dataFile= intent.getExtras().getString(KEY);
+            studentAchievementUtils = new StudentAchievementUtils(new CsvDataUtils(getApplicationContext()), dataFile);
         }
+
         currentXaxisLabels = new ArrayList<>();
         fetchStudentAchievement();
 
@@ -102,7 +106,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
     {
         LineDataSet lineDataSet;
         StudentAchievementUtils.Key k = positionToKey.get(position);
-        List<StudentAchievementUtils.Value> values = achievementsMap.get(positionToKey.get(position));
+        List<StudentAchievementUtils.Value> values = studentAchievementUtils.fetchStudentAchievementForKey(positionToKey.get(position));
 
         List<Entry> entries = new ArrayList<Entry>();
 
@@ -119,7 +123,9 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
     }
     private void fetchStudentAchievement()
     {
-        achievementsMap = studentAchievementUtils.fetchStudentAchievement( getApplicationContext(), dataFile);
+        if (studentAchievementUtils == null)
+            return;
+        Set<StudentAchievementUtils.Key> achievementsCategories = studentAchievementUtils.fetchUniqueKeys();
         //LineDataSet dataSet = lineDataSets.get(0);
         //for (LineDataSet dataSet : lineDataSets){
         //Toast.makeText(getApplicationContext(), dataSet.getLabel()+" "+dataSet.getEntryCount(), Toast.LENGTH_SHORT).show();
@@ -127,7 +133,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
         ArrayList<String> labels = new ArrayList<>();
         positionToKey = new HashMap<>();
         int i = 0;
-        for (StudentAchievementUtils.Key key : achievementsMap.keySet()){
+        for (StudentAchievementUtils.Key key : achievementsCategories){
             labels.add("Stroke index of " + key.style + " " + key.distance);
             positionToKey.put(i++, key);
         }
