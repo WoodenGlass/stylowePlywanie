@@ -10,20 +10,15 @@ import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class StudentAchievementUtils {
-    private ArrayList<StudentAchievement> studentAchievements;
-    private Set<Key> keys;
     private CsvDataUtils csvDataUtils;
-    private String dataFile;
     public static class Key{
-        public String style;
-        public String distance;
+        String style;
+        String distance;
         Key(String style, String distance){this.style = LanguageUtils.removePolishSigns(style); this.distance = distance;}
         public int hashCode() {
             return (style+distance).hashCode();
@@ -36,50 +31,16 @@ public class StudentAchievementUtils {
         }
     };
     public static class Value {
-        public Value(String date, String strokeIndex){
-            this.date = date;
-            this.strokeIndex = strokeIndex;
-        }
-        public String date;
-        public String strokeIndex;
+        String date;
+        String strokeIndex;
     }
 
-    public StudentAchievementUtils(CsvDataUtils csvDataUtils, String dataFile) {
+    public StudentAchievementUtils(CsvDataUtils csvDataUtils) {
             this.csvDataUtils = csvDataUtils;
-            studentAchievements = null;
-            this.dataFile = dataFile;
-            keys = null;
     }
 
-    public Set<Key> fetchUniqueKeys()
-    {
-        if (keys != null)
-            return keys;
-
-        keys = new HashSet<>();
-        if (studentAchievements == null) {
-            studentAchievements = csvDataUtils.getStudentAchievements(dataFile);
-        }
-        for (StudentAchievement studentAchievement : studentAchievements) {
-            Key k = new Key(studentAchievement.style, studentAchievement.distance);
-            keys.add(new Key(studentAchievement.style, studentAchievement.distance));
-        }
-        return keys;
-    }
-    public List<Value> fetchStudentAchievementForKey(Key k)
-    {
-        List<Value> values = new ArrayList<>();
-        for (StudentAchievement studentAchievement : studentAchievements) {
-            if (studentAchievement.distance.equals(k.distance) && studentAchievement.style.equals( k.style)){
-                values.add(new Value(studentAchievement.date, studentAchievement.strokeIndex.toString()));
-            }
-        }
-        return values;
-    }
-    public Map<Key, List<Value>> fetchStudentAchievement() {
-        if (studentAchievements == null) {
-            studentAchievements = csvDataUtils.getStudentAchievements(dataFile);
-        }
+    public Map<Key, List<Value>> fetchStudentAchievement(Context applicationContext, String dataFile) {
+        ArrayList<StudentAchievement> studentAchievements = csvDataUtils.getStudentAchievements(dataFile);
         Map<Key, List<Value>> achievementsMap = new HashMap<>();
         for (StudentAchievement studentAchievement : studentAchievements) {
             Key k = new Key(studentAchievement.style, studentAchievement.distance);
@@ -91,7 +52,9 @@ public class StudentAchievementUtils {
             } else {
                 values = new ArrayList<Value>(1);
             }
-            Value v = new Value(studentAchievement.date, studentAchievement.strokeIndex.toString());
+            Value v = new Value();
+            v.date = studentAchievement.date;
+            v.strokeIndex = studentAchievement.strokeIndex.toString();
             values.add(v);
             achievementsMap.put(k, values);
         }

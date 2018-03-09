@@ -104,8 +104,8 @@ public class StudentAchievementUtilsTest {
 
         when(csvDataUtils.getStudentAchievements(dataFile)).thenReturn(studentAchievements);
         Map<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>> achievementsMap = new HashMap<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>>();
-        sut = new StudentAchievementUtils(csvDataUtils, dataFile);
-        achievementsMap = sut.fetchStudentAchievement();
+        sut = new StudentAchievementUtils(csvDataUtils);
+        achievementsMap = sut.fetchStudentAchievement(contextMock, dataFile);
 
         StudentAchievementUtils.Key k  = new StudentAchievementUtils.Key("kraul", "100");
 
