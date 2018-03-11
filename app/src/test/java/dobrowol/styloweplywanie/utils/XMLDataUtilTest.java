@@ -60,7 +60,13 @@ public class XMLDataUtilTest {
         assertTrue(teamData.students.contains("kraul"));
 
     }
-
+    @Test
+    public void retrieveTeamDataWithEmptyTeamName() throws Exception {
+        File file = new File("./");
+        when(contextMock.getFilesDir()).thenReturn(file);
+        TeamData teamData = sut.retrieveTeamData("");
+        assertEquals(teamData, null);
+    }
     @Test
     public void getTeams() throws Exception {
 

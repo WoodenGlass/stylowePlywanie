@@ -30,6 +30,7 @@ import java.util.List;
 
 public class StudentsActivity extends AppCompatActivity implements StudentAdapter.StudentSelectedListener  {
     private static final int ADD_TEAM_REQUEST = 1;
+
     private StudentAdapter adapter;
     private RecyclerView itemsView;
     private List<TeamData> items;

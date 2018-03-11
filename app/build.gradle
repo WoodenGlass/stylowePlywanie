@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+
     defaultConfig {
         applicationId "dobrowol.styloweplywanie"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 3
-        versionName "1.0.1"
+        versionCode 6
+        versionName "1.0.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

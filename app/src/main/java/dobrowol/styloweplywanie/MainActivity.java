@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.Subscribe;
 import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener  {
-    private Button connectButton;
+
     private TextView textView;
     private String messageContent="";
     @Override
@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.textView);
-        connectButton = (Button) findViewById(R.id.connectButton);
         if (EventBus.getDefault() == null) {
             EventBus.builder()
                     .logNoSubscriberMessages(false)
@@ -54,11 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             messageContent = savedInstanceState.getString("messageContent"); //here zero is the default value
         }
     }
-    @Subscribe
-    public void onReceiverEvent(ReceiverEvent event){
-        Log.d(TAG, "DUPA " + event.message);
-        messageContent = event.message;
-    }
+
     @Override
     public void onClick(View v) {
         String token = FirebaseInstanceId.getInstance().getToken();

@@ -1,5 +1,6 @@
 package dobrowol.styloweplywanie.teammanagement;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +39,8 @@ import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.StudentData;
 import dobrowol.styloweplywanie.utils.TeamData;
 import dobrowol.styloweplywanie.utils.TeamDataUtils;
+import dobrowol.styloweplywanie.welcome.CreateTeamActivity;
+import dobrowol.styloweplywanie.welcome.JoinTeamActivity;
 
 /**
  * Created by dobrowol on 08.01.18.
@@ -46,11 +49,13 @@ import dobrowol.styloweplywanie.utils.TeamDataUtils;
 public class TrainingManager extends AppCompatActivity implements View.OnClickListener {
     private static final int ADD_TEAM_REQUEST = 1;
     private static final String KEY = "TeamName";
+    private static final int ADD_STUDENT_REQUEST = 2;
     private String currentTime;
     private Button btnStart;
     private Button btnLap;
     private Button btnStop;
     private Button btnReset;
+    private Menu the_menu;
     TextView mTimerView, mStudentName, mStrokeIndex, mStopBtn;
     int Seconds, Minutes, MilliSeconds ;
     long MillisecondTime, StartTime =0L, TimeBuff, UpdateTime = 0L ;
@@ -251,30 +256,50 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_addTeam:
+                showAddTeam();
+                return true;
+            case R.id.action_addTeamMember:
                 showAddStudent();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void showAddTeam() {
+        Intent intent = new Intent(this, CreateTeamActivity.class);
+        startActivityForResult(intent, ADD_TEAM_REQUEST);
+    }
+
     private void showAddStudent() {
+        if (teamData == null)
+            return;
         Intent intent = new Intent(this, StudentsActivity.class);
         intent.putExtra(KEY, teamData.teamName);
         //Intent pickContactIntent = new Intent(Intent.ACTION_PICK, ));
         // Show user only contacts w/ phone numbers
-        startActivityForResult(intent, ADD_TEAM_REQUEST);
+        startActivityForResult(intent, ADD_STUDENT_REQUEST);
         //StudentsActivity.startActivity(teamData.teamName, TrainingManager.this);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        fetchTeam(teamData.teamName);
+        if (requestCode == ADD_STUDENT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                fetchTeam(teamData.teamName);
+            }
+        }
+            else if (requestCode == ADD_TEAM_REQUEST) {
+                if(resultCode == Activity.RESULT_OK) {
+                    fetchTeam( data.getStringExtra(CreateTeamActivity.RETURNED_DATA_KEY));
+                }
+        }
     }
     private void fetchTeam(String teamName) {
         TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
         teamData = teamDataUtils.getTeam(teamName);
         if (teamData == null)
             return;
+        the_menu.findItem(R.id.action_addTeamMember).setVisible(true).setEnabled(true);
         studentToStudentData = new HashMap(teamData.students.size());
         for (StudentData student: teamData.students) {
             String studentName = student.name + " " + student.surname;
@@ -439,5 +464,11 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         updateStrokeIndex();
         mStudentName.setText(savedInstanceState.getString("studentName"));
         mTimerView.setText(savedInstanceState.getString("currentTime"));
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        the_menu = menu;
+        menu.findItem(R.id.action_addTeamMember).setVisible(false).setEnabled(false);
+        return true;
     }
 }

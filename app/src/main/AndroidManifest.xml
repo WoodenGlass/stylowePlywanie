@@ -31,28 +31,26 @@
                 android:value=".welcome.InitialWelcome" />
 
         </activity>
-        <service android:name=".StudentInstanceIdService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-        <service android:name=".StudentMessageHandler">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
         <activity android:name=".teammanagement.TeamActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".welcome.CreateTeamActivity" />
         </activity>
-        <activity android:name=".welcome.JoinTeamActivity" >
+        <activity
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:name=".teammanagement.TrainingManager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity android:name=".welcome.JoinTeamActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".welcome.JoinTeamActivity"/>
         </activity>
         <activity android:name=".teammanagement.TeamDetailsActivity">
 
@@ -61,13 +59,7 @@
 
 
         </activity>
-        <activity
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:name=".teammanagement.TrainingManager">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".welcome.JoinTeamActivity"/>
-        </activity>
+
         <activity android:name=".teammanagement.trainingdetails.StudentAchievementChartActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

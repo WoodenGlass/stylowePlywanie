@@ -163,9 +163,12 @@ public class XMLDataUtil implements IDataUtil {
 
     @Override
     public TeamData retrieveTeamData(String teamName) {
-            String filename = prefix + teamName+".xml";
-            File file = new File(context.getFilesDir(), filename);
-            TeamData teamData = getTeamData(file);
+        if (teamName == null || teamName == "")
+            return null;
+
+        String filename = prefix + teamName+".xml";
+        File file = new File(context.getFilesDir(), filename);
+        TeamData teamData = getTeamData(file);
         return teamData;
     }
 
