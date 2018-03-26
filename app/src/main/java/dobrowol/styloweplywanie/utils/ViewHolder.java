@@ -3,6 +3,7 @@ package dobrowol.styloweplywanie.utils;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
         itemView.setOnCreateContextMenuListener(this);
+
     }
 
     public void fillView(TeamData userDetails, Picasso imageLoader) {
@@ -61,5 +63,8 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         listener.OnItem(getAdapterPosition());
         return false;
     }
+
+
+
 }
 

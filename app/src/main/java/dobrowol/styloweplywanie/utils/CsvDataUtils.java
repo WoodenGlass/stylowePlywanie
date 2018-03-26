@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dobrowol on 01.02.18.
@@ -23,10 +24,36 @@ public class CsvDataUtils {
         this.context = context;
     }
 
+    private String prepareLine(StudentAchievement data)
+    {
+        return data.date + "," + data.style + "," + data.distance + ","+data.time+","+data.strokeCount+","+data.strokeIndex;
+    }
+    public void overwrite(List<StudentAchievement> list, String dataFile)
+    {
+        List<String> allLines = new ArrayList<>();
+        FileOutputStream outputStream;
+        try {
+            outputStream = context.openFileOutput(dataFile,Context.MODE_PRIVATE);
+
+
+            PrintWriter pw = new PrintWriter(outputStream);
+            for (StudentAchievement s : list)
+            {
+                pw.append( prepareLine(s));
+                pw.println();
+            }
+
+
+            pw.flush();
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public void saveStudentAchievement(StudentAchievement data, String dataFile)
     {
             data.calculateStrokeIndex();
-            String outputString = data.date + "," + data.style + "," + data.distance + ","+data.time+","+data.strokeCount+","+data.strokeIndex;
+            String outputString = prepareLine(data);
             FileOutputStream outputStream;
         try {
             outputStream = context.openFileOutput(dataFile, Context.MODE_APPEND);

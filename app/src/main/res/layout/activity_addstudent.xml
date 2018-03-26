@@ -23,7 +23,7 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/editText_studentage"
-        android:hint="Wiek" />
+        android:hint="Data urodzenia" />
 
     <Button
         android:text="OK"

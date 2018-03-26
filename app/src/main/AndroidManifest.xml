@@ -61,9 +61,7 @@
         </activity>
 
         <activity android:name=".teammanagement.trainingdetails.StudentAchievementChartActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".teammanagement.StudentsActivity"/>
+
         </activity>
         <activity android:name=".teammanagement.AddStudentActivity"
             >
@@ -82,10 +80,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".teammanagement.AddTrainingActivity"/>
         </activity>
-        <activity android:name=".utils.StudentAchievementActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".teammanagement.StudentsActivity"/>
+        <activity android:name=".teammanagement.trainingdetails.StudentAchievementActivity"
+            android:screenOrientation="landscape">
+
         </activity>
 
     </application>

@@ -1,6 +1,10 @@
 package dobrowol.styloweplywanie.utils;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by dobrowol on 01.02.18.
@@ -13,6 +17,39 @@ public class StudentAchievement implements Serializable {
     public String time;
     public String date;
     public Float strokeIndex;
+    public void setDate()
+    {
+        date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+    }
+    public void setDate(String dateStr)
+    {
+        String formattedDate;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        if (dateStr != null) {
+            if ((formattedDate = sdf.format(dateStr)) != null) {
+                date = formattedDate;
+            }
+            else if ((formattedDate = new SimpleDateFormat("yyyyMMdd_HHmmss").format(dateStr))!= null)
+            {
+                date = formattedDate;
+            }
+            else {
+                setDate();
+            }
+        }
+    }
+
+    public String displayDate()
+    {
+        String formattedDate;
+
+        Date d = ConvertUtils.stringToDate(date);
+        if (d != null) {
+            formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(d);
+            return formattedDate;
+        }
+        return "";
+    }
     public void calculateStrokeIndex()
     {
         int s = time2seconds(time);

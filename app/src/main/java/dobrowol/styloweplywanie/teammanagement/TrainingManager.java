@@ -50,6 +50,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     private static final int ADD_TEAM_REQUEST = 1;
     private static final String KEY = "TeamName";
     private static final int ADD_STUDENT_REQUEST = 2;
+    private static final int JOIN_TEAM_REQUEST = 3;
     private String currentTime;
     private Button btnStart;
     private Button btnLap;
@@ -111,6 +112,10 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
             fetchTeam(intent.getExtras().getString(KEY));
+        }
+        else
+        {
+            fetchTeam("");
         }
         numberOfRunningStopwatch = 0;
         btnStart = (Button) findViewById(R.id.btnStart);
@@ -267,8 +272,17 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private void showAddTeam() {
-        Intent intent = new Intent(this, CreateTeamActivity.class);
-        startActivityForResult(intent, ADD_TEAM_REQUEST);
+        TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
+        Intent intent;
+        if (teamDataUtils.getTeams().size() > 0)
+        {
+            intent = new Intent(this, JoinTeamActivity.class);
+            startActivityForResult(intent, JOIN_TEAM_REQUEST);
+        }
+        else {
+            intent = new Intent(this, CreateTeamActivity.class);
+            startActivityForResult(intent, ADD_TEAM_REQUEST);
+        }
     }
 
     private void showAddStudent() {
@@ -293,13 +307,35 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                     fetchTeam( data.getStringExtra(CreateTeamActivity.RETURNED_DATA_KEY));
                 }
         }
+        else if (requestCode == JOIN_TEAM_REQUEST) {
+            if(resultCode == Activity.RESULT_OK) {
+                fetchTeam( data.getStringExtra(JoinTeamActivity.RETURNED_DATA_KEY));
+            }
+        }
     }
     private void fetchTeam(String teamName) {
+
         TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
-        teamData = teamDataUtils.getTeam(teamName);
+        if (teamName == null || teamName == "")
+        {
+            ArrayList<TeamData> items = teamDataUtils.getTeams();
+            if (items.size()>0) {
+                teamData = items.get(0);
+            }
+        }
+        else {
+            teamData = teamDataUtils.getTeam(teamName);
+        }
         if (teamData == null)
+        {
+            setTitle("Stylowe Pływanie(No team)");
             return;
-        the_menu.findItem(R.id.action_addTeamMember).setVisible(true).setEnabled(true);
+        }
+        setTitle("Stylowe Pływanie("+teamData.teamName+")");
+
+        if (the_menu != null) {
+            the_menu.findItem(R.id.action_addTeamMember).setVisible(true).setEnabled(true);
+        }
         studentToStudentData = new HashMap(teamData.students.size());
         for (StudentData student: teamData.students) {
             String studentName = student.name + " " + student.surname;
@@ -319,8 +355,10 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         int position = info.position;
         selectedTime = (String) listView.getItemAtPosition(position);
         currentStudentAchievement.time = (String) listView.getItemAtPosition(position);
-        for (StudentData student : teamData.students) {
-            menu.add(0, v.getId(), 0, student.name+" "+student.surname);
+        if (teamData != null) {
+            for (StudentData student : teamData.students) {
+                menu.add(0, v.getId(), 0, student.name + " " + student.surname);
+            }
         }
 
     }
@@ -378,6 +416,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 btnLap.setEnabled(false);
                 mStrokeIndex.setText("StrokeIndex: 0.0");
                 mStudentName.setText("");
+                numberOfRunningStopwatch=0;
+                mStopBtn.setText("STOP ("+numberOfRunningStopwatch+")");
                 break;
             case R.id.btnStop:
                 long stopTime = SystemClock.uptimeMillis();
@@ -398,8 +438,12 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.btnSaveAchievement:
                 CsvDataUtils csvDataUtils = new CsvDataUtils(getApplicationContext());
-
-                currentStudentAchievement.date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+                currentStudentAchievement.setDate();
+                if (fileToSave == null || fileToSave == "")
+                {
+                    Toast.makeText(getApplicationContext(),"You have to choose student to save achievement!(Long click on result)",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 csvDataUtils.saveStudentAchievement(currentStudentAchievement, fileToSave);
                 //Toast.makeText(getApplicationContext(),"Saved to "+fileToSave,Toast.LENGTH_SHORT).show();
                 break;
@@ -453,7 +497,6 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.d("DUPA"," restoreInstance");
         spnrStrokeCount.setSelection(savedInstanceState.getInt("strokeCount"));
         spnrDistance.setSelection(savedInstanceState.getInt("distance"));
         spnr.setSelection(savedInstanceState.getInt("style"));
@@ -468,7 +511,12 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         the_menu = menu;
-        menu.findItem(R.id.action_addTeamMember).setVisible(false).setEnabled(false);
+        if (teamData == null) {
+            menu.findItem(R.id.action_addTeamMember).setVisible(false).setEnabled(false);
+        }
+        else {
+            the_menu.findItem(R.id.action_addTeamMember).setVisible(true).setEnabled(true);
+        }
         return true;
     }
 }

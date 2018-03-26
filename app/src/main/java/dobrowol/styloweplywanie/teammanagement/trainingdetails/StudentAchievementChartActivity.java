@@ -1,9 +1,11 @@
 package dobrowol.styloweplywanie.teammanagement.trainingdetails;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import dobrowol.styloweplywanie.R;
+import dobrowol.styloweplywanie.utils.ConvertUtils;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -35,12 +38,14 @@ import static dobrowol.styloweplywanie.R.id.chart;
  * Created by dobrowol on 10.02.18.
  */
 
-public class StudentAchievementChartActivity extends AppCompatActivity {
+public class StudentAchievementChartActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int EDIT_ACHIEVEMENTS = 1;
     private StudentAchievementUtils studentAchievementUtils;
+    private FloatingActionButton fab;
     private LineChart lineChart;
     private String dataFile;
-    private static final String KEY = "DataFile";
+    public static final String KEY = "DataFile";
     private Spinner labelSpinner;
     private ArrayList<String> currentXaxisLabels;
     private Map<Integer, StudentAchievementUtils.Key> positionToKey;
@@ -54,6 +59,8 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_studentachievementchart);
         lineChart = (LineChart) findViewById(chart);
         labelSpinner = (Spinner) findViewById(R.id.labelsSpinner);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(this);
          // add entries to dataset
         //dataSet.setColor(0x2db82d);
 
@@ -119,6 +126,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
     }
     private void fetchStudentAchievement()
     {
+        studentAchievementUtils = new StudentAchievementUtils(new CsvDataUtils(getApplicationContext()));
         achievementsMap = studentAchievementUtils.fetchStudentAchievement( getApplicationContext(), dataFile);
         //LineDataSet dataSet = lineDataSets.get(0);
         //for (LineDataSet dataSet : lineDataSets){
@@ -160,6 +168,14 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
         //}
     }
 
+    @Override
+    public void onClick(View v) {
+        Intent i = new Intent(this, StudentAchievementActivity.class);
+        i.putExtra(StudentAchievementActivity.KEY, dataFile);
+        startActivityForResult(i, EDIT_ACHIEVEMENTS);
+        //StudentAchievementActivity.startActivity(dataFile, StudentAchievementChartActivity.this);
+    }
+
     public class MyXAxisValueFormatter implements IAxisValueFormatter {
 
         private List<String> mValues;
@@ -174,17 +190,21 @@ public class StudentAchievementChartActivity extends AppCompatActivity {
             int index = (int)value;
             String fValue="";
             if (index >=0 && index < mValues.size()) {
-                Date date;
-                try {
-                    date = new SimpleDateFormat("yyyyMMdd_HHmmss").parse(mValues.get((int) value));
+                Date date = ConvertUtils.stringToDate(mValues.get((int) value));
+                if (date != null) {
                     fValue = new SimpleDateFormat("yyyy/MM/dd").format(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
                 }
             }
             return fValue;
         }
 
 
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EDIT_ACHIEVEMENTS) {
+            if (resultCode == Activity.RESULT_OK) {
+                fetchStudentAchievement();
+            }
+        }
     }
 }

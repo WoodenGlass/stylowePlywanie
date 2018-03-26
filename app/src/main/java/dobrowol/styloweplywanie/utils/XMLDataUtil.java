@@ -211,13 +211,13 @@ public class XMLDataUtil implements IDataUtil {
                 Node surnameNode = el.getElementsByTagName("surname").item(0);
                 Node ageNode = el.getElementsByTagName("dateOfBirth").item(0);
                 Node dataFile = el.getElementsByTagName("dataFile").item(0);
-                if (nameNode !=null)
+                if (nameNode !=null && nameNode.getFirstChild() != null)
                     studentData.name = nameNode.getFirstChild().getNodeValue();
-                if (surnameNode != null)
+                if (surnameNode != null && surnameNode.getFirstChild() != null)
                     studentData.surname = surnameNode.getFirstChild().getNodeValue();
-                if (ageNode != null)
+                if (ageNode != null && ageNode.getFirstChild() != null)
                     studentData.age = ageNode.getFirstChild().getNodeValue();
-                if (dataFile !=null)
+                if (dataFile !=null && dataFile.getFirstChild() != null)
                     studentData.dataFile = dataFile.getFirstChild().getNodeValue();
                 else
                 {

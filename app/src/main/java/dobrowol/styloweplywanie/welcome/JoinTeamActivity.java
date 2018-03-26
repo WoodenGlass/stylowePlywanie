@@ -37,6 +37,7 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
     private List<TeamData> items;
     private TeamDataUtils teamUtils;
     private int teamToRemove;
+    public final static String RETURNED_DATA_KEY = "TeamName";
 
 
     @Override
@@ -72,7 +73,15 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
     }
     @Override
     public void onItemSelected(TeamData item) {
-        fetchTeam(item.getTeamName());
+        finishWithResult(item.getTeamName());
+        //fetchTeam(item.getTeamName());
+    }
+    private void finishWithResult(String teamName) {
+        Intent returnIntent = new Intent();
+
+        returnIntent.putExtra(RETURNED_DATA_KEY,teamName);
+        setResult(Activity.RESULT_OK,returnIntent);
+        finish();
     }
 
     @Override

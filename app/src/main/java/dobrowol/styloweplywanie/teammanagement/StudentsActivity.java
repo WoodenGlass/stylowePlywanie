@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import dobrowol.styloweplywanie.R;
@@ -36,6 +38,7 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
     private List<TeamData> items;
     private TeamDataUtils teamUtils;
     private TeamData teamData;
+    private FloatingActionButton fab;
     private static final String KEY = "TeamName";
 
 
@@ -46,7 +49,9 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
 
         //TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
         //teamDataUtils.clearCache();
-
+        fab = (FloatingActionButton) findViewById(R.id.fab_check);
+        fab.setVisibility(View.INVISIBLE);
+        fab.setEnabled(false);
         itemsView = (RecyclerView) findViewById(R.id.items_view);
         itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
@@ -88,6 +93,8 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_jointeam, menu);
+        menu.findItem(R.id.action_addTeam).setVisible(false).setEnabled(false);
+        menu.findItem(R.id.action_addTeamMember).setVisible(true).setEnabled(true);
 
         return true;
     }
@@ -95,7 +102,7 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_addTeam:
+            case R.id.action_addTeamMember:
                 showAddStudent();
                 return true;
 
@@ -106,7 +113,7 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
 
     private void showAddStudent() {
         Intent intent = new Intent(this, AddStudentActivity.class);
-
+        intent.putExtra(KEY, teamData.teamName);
         //Intent pickContactIntent = new Intent(Intent.ACTION_PICK, ));
         // Show user only contacts w/ phone numbers
         startActivityForResult(intent, ADD_TEAM_REQUEST);
@@ -116,21 +123,7 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
         if (requestCode == ADD_TEAM_REQUEST) {
             if(resultCode == Activity.RESULT_OK){
 
-                StudentData studentData = (StudentData) data.getExtras().getSerializable(AddStudentActivity.RETURNED_DATA_KEY);
-                if (studentData != null) {
-                    teamData.addStudent(studentData);
-                    TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
-                    teamDataUtils.updateTeam(teamData);
-                    fetchStudents(teamData.teamName);
-                    String wasAddedString = getResources().getString(R.string.wasAdded);
-                    Toast.makeText(this, "Student "
-                                    + studentData.name + " " + wasAddedString,
-                            Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    Log.d("DUPA", "nie ma studenta");
-                }
+                fetchStudents(teamData.teamName);
             }
         }
     }
