@@ -102,7 +102,7 @@ public class XMLDataUtil implements IDataUtil {
                 surname.appendChild(doc.createTextNode(studentData.surname));
                 student.appendChild(surname);
                 Element age = doc.createElement("dateOfBirth");
-                age.appendChild(doc.createTextNode(studentData.age));
+                age.appendChild(doc.createTextNode(studentData.dateOfBirth));
                 student.appendChild(age);
                 studentData.dataFile = studentData.name+studentData.surname+".csv";
                 //studentData.dataFile = studentData.dataFile.toLowerCase();
@@ -216,7 +216,7 @@ public class XMLDataUtil implements IDataUtil {
                 if (surnameNode != null && surnameNode.getFirstChild() != null)
                     studentData.surname = surnameNode.getFirstChild().getNodeValue();
                 if (ageNode != null && ageNode.getFirstChild() != null)
-                    studentData.age = ageNode.getFirstChild().getNodeValue();
+                    studentData.dateOfBirth = ageNode.getFirstChild().getNodeValue();
                 if (dataFile !=null && dataFile.getFirstChild() != null)
                     studentData.dataFile = dataFile.getFirstChild().getNodeValue();
                 else

@@ -66,6 +66,7 @@ public class AchievementsViewHolder extends RecyclerView.ViewHolder implements V
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
         itemView.setOnCreateContextMenuListener(this);
+
         timeET.setOnFocusChangeListener(this);
         dateEt.setOnFocusChangeListener(this);
         styleEt.setOnFocusChangeListener(this);

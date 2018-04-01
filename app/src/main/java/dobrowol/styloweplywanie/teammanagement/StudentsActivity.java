@@ -22,6 +22,8 @@ import dobrowol.styloweplywanie.utils.StudentAdapter;
 import dobrowol.styloweplywanie.utils.StudentData;
 import dobrowol.styloweplywanie.utils.TeamData;
 import dobrowol.styloweplywanie.utils.TeamDataUtils;
+import dobrowol.styloweplywanie.utils.WrapContentLinearLayoutManager;
+
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -53,7 +55,7 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
         fab.setVisibility(View.INVISIBLE);
         fab.setEnabled(false);
         itemsView = (RecyclerView) findViewById(R.id.items_view);
-        itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        itemsView.setLayoutManager(new WrapContentLinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         adapter = new StudentAdapter(this, Picasso.with(this));
         itemsView.setAdapter(adapter);

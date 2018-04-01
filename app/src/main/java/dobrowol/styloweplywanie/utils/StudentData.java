@@ -10,21 +10,21 @@ import java.util.Calendar;
 public class StudentData implements Serializable{
     public String name;
     public String surname;
-    public String age;
+    public String dateOfBirth;
     public String dataFile;
 
-    public void setAge(Calendar dateOfBirth) {
+    public void setDateOfBirth(Calendar dateOfBirth) {
         String formatted="";
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         if (dateOfBirth != null) {
             formatted = sdf.format(dateOfBirth.getTime());
         }
-        this.age = formatted;
+        this.dateOfBirth = formatted;
     }
     public void setAge(String dateOfBirth)
     {
 
-        age=dateOfBirth;
+        this.dateOfBirth =dateOfBirth;
     }
 
     public void setSurname(String surname) {

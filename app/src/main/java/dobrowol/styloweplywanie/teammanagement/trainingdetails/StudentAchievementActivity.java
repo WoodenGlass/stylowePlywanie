@@ -27,6 +27,7 @@ import dobrowol.styloweplywanie.utils.CsvDataUtils;
 import dobrowol.styloweplywanie.utils.ItemsAdapter;
 import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.TeamData;
+import dobrowol.styloweplywanie.utils.WrapContentLinearLayoutManager;
 
 /**
  * Created by dobrowol on 25.01.18.
@@ -54,7 +55,7 @@ public class StudentAchievementActivity extends AppCompatActivity implements Vie
         fab = (FloatingActionButton) findViewById(R.id.fab_check);
         fab.setOnClickListener(this);
         itemsView = (RecyclerView) findViewById(R.id.items_view);
-        itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        itemsView.setLayoutManager(new WrapContentLinearLayoutManager(this, RecyclerView.VERTICAL, false));
         //registerForContextMenu(itemsView);
         adapter = new AchievementsItemsAdapter(this, Picasso.with(this));
         itemsView.setAdapter(adapter);

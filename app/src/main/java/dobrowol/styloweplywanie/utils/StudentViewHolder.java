@@ -32,8 +32,8 @@ public class StudentViewHolder extends RecyclerView.ViewHolder implements View.O
 
     public void fillView(StudentData userDetails, Picasso imageLoader) {
         this.userDetails = userDetails;
-        nameLabel.setText(this.userDetails.name);
-        surnameLabel.setText(this.userDetails.surname);
+        nameLabel.setText(this.userDetails.name+" "+this.userDetails.surname);
+        surnameLabel.setText(this.userDetails.dateOfBirth);
         //imageLoader.load(this.userDetails.getImageUrl()).into(profileImage);
     }
 

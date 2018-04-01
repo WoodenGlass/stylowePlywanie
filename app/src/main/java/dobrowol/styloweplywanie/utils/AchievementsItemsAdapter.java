@@ -32,7 +32,7 @@ public class AchievementsItemsAdapter extends RecyclerView.Adapter<AchievementsV
     public void removeItem(int position) {
         StudentAchievement teamData = items.get(position);
         listener.onItemRemoved(position);
-        items.remove(position);
+
 
         notifyItemRemoved(position);
     }

@@ -25,6 +25,7 @@ import dobrowol.styloweplywanie.teammanagement.TrainingManager;
 import dobrowol.styloweplywanie.utils.ItemsAdapter;
 import dobrowol.styloweplywanie.utils.TeamData;
 import dobrowol.styloweplywanie.utils.TeamDataUtils;
+import dobrowol.styloweplywanie.utils.WrapContentLinearLayoutManager;
 
 /**
  * Created by dobrowol on 27.03.17.
@@ -49,7 +50,7 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
         //teamDataUtils.clearCache();
 
         itemsView = (RecyclerView) findViewById(R.id.items_view);
-        itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        itemsView.setLayoutManager(new WrapContentLinearLayoutManager(this, RecyclerView.VERTICAL, false));
         //registerForContextMenu(itemsView);
         adapter = new ItemsAdapter(this, Picasso.with(this));
         itemsView.setAdapter(adapter);

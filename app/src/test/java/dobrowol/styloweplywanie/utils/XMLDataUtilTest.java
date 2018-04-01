@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.util.function.Predicate;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -55,7 +54,7 @@ public class XMLDataUtilTest {
         StudentData studentData = teamData.students.get(0);
         assertEquals(studentData.name, "Bartek");
         assertEquals(studentData.surname, "Mąka");
-        assertEquals(studentData.age, "26.05.2007");
+        assertEquals(studentData.dateOfBirth, "26.05.2007");
         assertEquals(teamData.styles.size(),2);
         assertTrue(teamData.students.contains("kraul"));
 

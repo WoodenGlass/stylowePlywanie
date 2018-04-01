@@ -94,7 +94,7 @@ public class AddStudentActivity extends FragmentActivity implements View.OnClick
         Log.d("DUPA", "addstudent activity 1");
         studentData.setName(String.valueOf(studentName.getText()));
         studentData.setSurname(String.valueOf(studentSurname.getText()));
-        studentData.setAge(dateOfBirth);
+        studentData.setDateOfBirth(dateOfBirth);
         teamData.addStudent(studentData);
         teamDataUtils.updateTeam(teamData);
         Intent returnIntent = new Intent();
