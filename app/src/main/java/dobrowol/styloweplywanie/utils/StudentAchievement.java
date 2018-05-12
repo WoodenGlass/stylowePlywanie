@@ -19,7 +19,13 @@ public class StudentAchievement implements Serializable {
     public Float strokeIndex;
     public void setDate()
     {
-        date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+        date = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+    }
+    public void setDate(Date aDate)
+    {
+        if (aDate != null) {
+            date = new SimpleDateFormat("dd/MM/yyyy").format(aDate);
+        }
     }
     public void setDate(String dateStr)
     {

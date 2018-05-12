@@ -192,7 +192,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
             if (index >=0 && index < mValues.size()) {
                 Date date = ConvertUtils.stringToDate(mValues.get((int) value));
                 if (date != null) {
-                    fValue = new SimpleDateFormat("yyyy/MM/dd").format(date);
+                    fValue = new SimpleDateFormat("dd/MM/yyyy").format(date);
                 }
             }
             return fValue;

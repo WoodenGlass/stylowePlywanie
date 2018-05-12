@@ -103,8 +103,10 @@ public class TeamDetailsActivity extends AppCompatActivity implements StudentAda
                 .build();*/
     }
     private void fetchStudents() {
-        items = teamData.students;
-        adapter.setItems(items);
+        if (teamData != null) {
+            items = teamData.students;
+            adapter.setItems(items);
+        }
 
     }
 

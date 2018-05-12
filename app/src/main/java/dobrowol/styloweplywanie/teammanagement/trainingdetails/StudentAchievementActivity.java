@@ -10,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +30,7 @@ import dobrowol.styloweplywanie.utils.ItemsAdapter;
 import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.TeamData;
 import dobrowol.styloweplywanie.utils.WrapContentLinearLayoutManager;
+import dobrowol.styloweplywanie.welcome.CreateTeamActivity;
 
 /**
  * Created by dobrowol on 25.01.18.
@@ -35,7 +38,7 @@ import dobrowol.styloweplywanie.utils.WrapContentLinearLayoutManager;
 
 public class StudentAchievementActivity extends AppCompatActivity implements View.OnClickListener, AchievementsItemsAdapter.ItemsSelectedListener {
     public static final String KEY = "StudentName";
-
+    private static final int ADD_ACHIEVEMENT_REQUEST = 1;
     private AchievementsItemsAdapter adapter;
     private RecyclerView itemsView;
     private String dataFile;
@@ -47,6 +50,8 @@ public class StudentAchievementActivity extends AppCompatActivity implements Vie
     private List<Integer> listOfRemoved;
     private int toRemove;
     private CsvDataUtils csvDataUtils;
+    private Menu the_menu;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +97,54 @@ public class StudentAchievementActivity extends AppCompatActivity implements Vie
         context.startActivity(intent);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_jointeam, menu);
+        the_menu = menu;
+        return true;
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        the_menu = menu;
+        the_menu.findItem(R.id.action_addTeamMember).setVisible(false).setEnabled(false);
+        the_menu.findItem(R.id.action_addTeam).setVisible(false).setEnabled(false);
+        the_menu.findItem(R.id.action_add).setVisible(true).setEnabled(true);
+        return true;
+    }
+    private void showAddAchievement() {
+        Intent intent = new Intent(this, AddStudentAchievementActivity.class);
 
+        //Intent pickContactIntent = new Intent(Intent.ACTION_PICK, ));
+        // Show user only contacts w/ phone numbers
+        startActivityForResult(intent, ADD_ACHIEVEMENT_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ADD_ACHIEVEMENT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                StudentAchievement studentAchievement = (StudentAchievement) data.getSerializableExtra(AddStudentAchievementActivity.KEY);
+                listOfAchievements.add(studentAchievement);
+                adapter.setItems(listOfAchievements);
+                csvDataUtils.saveStudentAchievement(studentAchievement, dataFile);
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                showAddAchievement();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId())

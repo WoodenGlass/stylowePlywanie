@@ -81,15 +81,16 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
             adapter.setItems(teamData.students);
         }
     }
-    private void fetchStudent(String studentDataFile) {
+    private void fetchStudent(StudentData studentData) {
         Log.d("DUPA", "fetchStudent");
         //TeamDetailsActivity.startDetailsActivity(teamData, JoinTeamActivity.this);
         //StudentAchievementActivity.startActivity(studentDataFile, StudentsActivity.this);
-        StudentAchievementChartActivity.startActivity(studentDataFile, StudentsActivity.this);
+        //StudentAchievementChartActivity.startActivity(studentDataFile, StudentsActivity.this);
+        StudentDetailsActivity.startActivity(studentData, StudentsActivity.this);
     }
     @Override
     public void onItemSelected(StudentData item) {
-        fetchStudent(item.dataFile);
+        fetchStudent(item);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

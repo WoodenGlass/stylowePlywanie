@@ -9,12 +9,14 @@
 
     <Spinner
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/labelsSpinner"></Spinner>
+        android:layout_height="30dp"
+        android:id="@+id/labelsSpinner"
+        ></Spinner>
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -5,16 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <AutoCompleteTextView
+    <EditText
         android:hint="Imie Ucznia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
         android:id="@+id/autocomplete_studentname" />
 
-    <AutoCompleteTextView
+    <EditText
         android:hint="Nazwisko Ucznia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
         android:id="@+id/autocomplete_studentsurname" />
 
     <EditText

@@ -1,14 +1,17 @@
 package dobrowol.styloweplywanie.teammanagement;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 import dobrowol.styloweplywanie.R;
@@ -24,8 +27,8 @@ import java.util.Calendar;
  * Created by dobrowol on 01.04.17.
  */
 public class AddStudentActivity extends FragmentActivity implements View.OnClickListener, DatePickerFragment.OnDateSelectedListener, View.OnFocusChangeListener {
-    private AutoCompleteTextView studentName;
-    private AutoCompleteTextView studentSurname;
+    private EditText studentName;
+    private EditText studentSurname;
     private Button addStudentOk;
     private EditText studentAge;
     private Calendar dateOfBirth;
@@ -42,8 +45,8 @@ public class AddStudentActivity extends FragmentActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addstudent);
 
-        studentName = (AutoCompleteTextView) findViewById(R.id.autocomplete_studentname);
-        studentSurname = (AutoCompleteTextView) findViewById(R.id.autocomplete_studentsurname);
+        studentName = (EditText) findViewById(R.id.autocomplete_studentname);
+        studentSurname = (EditText) findViewById(R.id.autocomplete_studentsurname);
         studentAge = (EditText) findViewById(R.id.editText_studentage);
         addStudentOk = (Button) findViewById(R.id.button_addStudentOK);
 
@@ -78,8 +81,8 @@ public class AddStudentActivity extends FragmentActivity implements View.OnClick
                 studentSurname.setText("");
                 break;
             case R.id.editText_studentage:
-                DialogFragment newFragment = new DatePickerFragment();
-                newFragment.show(getFragmentManager(), "datePicker");
+                Dialog newFragment = new DatePickerFragment(AddStudentActivity.this, AddStudentActivity.this);
+                newFragment.show();
                 break;
             case R.id.button_addStudentOK:
                 addStudent();
@@ -123,26 +126,13 @@ public class AddStudentActivity extends FragmentActivity implements View.OnClick
         {
             case R.id.editText_studentage:
                 if (hasFocus) {
-                    DialogFragment newFragment = new DatePickerFragment();
-                    newFragment.show(getFragmentManager(), "datePicker");
+                    //DialogFragment newFragment = new DatePickerFragment();
+                    Dialog newFragment = new DatePickerFragment(AddStudentActivity.this, AddStudentActivity.this);
+                    newFragment.show();
+
+                    //newFragment.show(getFragmentManager(), "datePicker");
                 }
-                else
-                {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-                    String editTextDateOfBirth = studentAge.getText().toString();
-                    if (editTextDateOfBirth != null && !editTextDateOfBirth.equals("")) {
-                        String formattedDate = sdf.format(editTextDateOfBirth);
-                        if (formattedDate != null)
-                        {
-                            dateOfBirthOk = true;
-                            isStudentSavable();
-                        }
-                    }
-                    else
-                    {
-                        dateOfBirthOk = false;
-                    }
-                }
+
                 break;
             case R.id.autocomplete_studentname:
                 String name = studentName.getText().toString();

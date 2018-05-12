@@ -12,6 +12,12 @@
         android:title="@string/action_addTeam"
 
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_add_black_24dp"
+        android:title="@string/action_add"
+        android:visible="false"
+        app:showAsAction="always"/>
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
         android:id="@+id/action_favorite"
