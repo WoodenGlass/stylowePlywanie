@@ -16,6 +16,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import dobrowol.styloweplywanie.R;
+import dobrowol.styloweplywanie.teammanagement.trainingdetails.StudentAchievementUtils;
+import dobrowol.styloweplywanie.utils.CsvDataUtils;
 import dobrowol.styloweplywanie.utils.StudentAdapter;
 import dobrowol.styloweplywanie.utils.StudentData;
 
@@ -71,6 +73,8 @@ public class StudentDetailsActivity extends AppCompatActivity implements Student
     }
     void fetchAchievements()
     {
+        StudentAchievementUtils studentAchievementUtils = new StudentAchievementUtils(new CsvDataUtils(getApplicationContext()));
+        achievementsMap = studentAchievementUtils.fetchStudentAchievement( getApplicationContext(), studentData.dataFile);
 
     }
 
