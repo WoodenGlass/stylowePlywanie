@@ -17,8 +17,8 @@ import java.util.Map;
 public class StudentAchievementUtils {
     private CsvDataUtils csvDataUtils;
     public static class Key{
-        String style;
-        String distance;
+        public String style;
+        public String distance;
         Key(String style, String distance){this.style = LanguageUtils.removePolishSigns(style); this.distance = distance;}
         public int hashCode() {
             return (style+distance).hashCode();
@@ -31,36 +31,64 @@ public class StudentAchievementUtils {
         }
     };
     public static class Value {
-        String date;
-        String strokeIndex;
+        public String date;
+        public String strokeIndex;
+        public String time;
     }
 
     public StudentAchievementUtils(CsvDataUtils csvDataUtils) {
             this.csvDataUtils = csvDataUtils;
     }
 
-    public Map<Key, List<Value>> fetchStudentAchievement(Context applicationContext, String dataFile) {
+    public Map<Key, List<StudentAchievement>> fetchStudentAchievement(String dataFile) {
         ArrayList<StudentAchievement> studentAchievements = csvDataUtils.getStudentAchievements(dataFile);
-        Map<Key, List<Value>> achievementsMap = new HashMap<>();
+        Map<Key, List<StudentAchievement>> achievementsMap = new HashMap<>();
         for (StudentAchievement studentAchievement : studentAchievements) {
             Key k = new Key(studentAchievement.style, studentAchievement.distance);
 
-            ArrayList<Value> values;
+            ArrayList<StudentAchievement> values;
             if (achievementsMap.containsKey(k)) {
-                values = (ArrayList<Value>) achievementsMap.get(k);
+                values = (ArrayList<StudentAchievement>) achievementsMap.get(k);
 
             } else {
-                values = new ArrayList<Value>(1);
+                values = new ArrayList<StudentAchievement>(1);
             }
-            Value v = new Value();
-            v.date = studentAchievement.date;
-            v.strokeIndex = studentAchievement.strokeIndex.toString();
-            values.add(v);
+            values.add(studentAchievement);
             achievementsMap.put(k, values);
         }
         return achievementsMap;
     }
-    public List<LineDataSet> getLineDataSets(Map<Key, List<Value>> achievementsMap)
+    public List<StudentAchievement> getBestResults(String dataFile)
+    {
+        List<StudentAchievement> bestResults = new ArrayList<>();
+        Map<Key, List<StudentAchievement>> all = fetchStudentAchievement(dataFile);
+
+        Iterator it = all.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            StudentAchievementUtils.Key k = (Key) pair.getKey();
+            List<StudentAchievement> values = (List<StudentAchievement>) pair.getValue();
+
+            List<Entry> entries = new ArrayList<Entry>();
+
+            int i = 0;
+            StudentAchievement best = new StudentAchievement();
+            int min = 1000000000;
+            // turn your data into Entry objects
+            for (StudentAchievement v : values) {
+                int time = Integer.parseInt(v.time);
+                if (time < min) {
+                    min = time;
+                    best = v;
+                }
+
+            }
+            bestResults.add(best);
+        }
+
+        return bestResults;
+    }
+    public List<LineDataSet> getLineDataSets(Map<Key, List<StudentAchievement>> achievementsMap)
     {
         ArrayList<LineDataSet> lineDataSetArray = new ArrayList<>();
         Iterator it = achievementsMap.entrySet().iterator();

@@ -15,6 +15,8 @@ import android.widget.Spinner;
 import dobrowol.styloweplywanie.R;
 import dobrowol.styloweplywanie.utils.ConvertUtils;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
+import dobrowol.styloweplywanie.utils.StudentAchievement;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
@@ -49,7 +51,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
     private Spinner labelSpinner;
     private ArrayList<String> currentXaxisLabels;
     private Map<Integer, StudentAchievementUtils.Key> positionToKey;
-    private Map<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>> achievementsMap;
+    private Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap;
 
 
     @Override
@@ -105,17 +107,17 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
 
         context.startActivity(intent);
     }
-    private LineDataSet getLineDataSet(Map<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>> achievementsMap, int position)
+    private LineDataSet getLineDataSet(Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap, int position)
     {
         LineDataSet lineDataSet;
         StudentAchievementUtils.Key k = positionToKey.get(position);
-        List<StudentAchievementUtils.Value> values = achievementsMap.get(positionToKey.get(position));
+        List<StudentAchievement> values = achievementsMap.get(positionToKey.get(position));
 
         List<Entry> entries = new ArrayList<Entry>();
 
         int i = 0;
             // turn your data into Entry objects
-        for (StudentAchievementUtils.Value v : values) {
+        for (StudentAchievement v : values) {
             entries.add(new Entry(i++, Float.valueOf(v.strokeIndex)));
             currentXaxisLabels.add(v.date);
         }
@@ -127,7 +129,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
     private void fetchStudentAchievement()
     {
         studentAchievementUtils = new StudentAchievementUtils(new CsvDataUtils(getApplicationContext()));
-        achievementsMap = studentAchievementUtils.fetchStudentAchievement( getApplicationContext(), dataFile);
+        achievementsMap = studentAchievementUtils.fetchStudentAchievement( dataFile);
         //LineDataSet dataSet = lineDataSets.get(0);
         //for (LineDataSet dataSet : lineDataSets){
         //Toast.makeText(getApplicationContext(), dataSet.getLabel()+" "+dataSet.getEntryCount(), Toast.LENGTH_SHORT).show();

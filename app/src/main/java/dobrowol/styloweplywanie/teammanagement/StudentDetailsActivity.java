@@ -8,20 +8,29 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import dobrowol.styloweplywanie.R;
 import dobrowol.styloweplywanie.teammanagement.trainingdetails.StudentAchievementUtils;
+import dobrowol.styloweplywanie.utils.AchievementAdapter;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
+import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.StudentAdapter;
 import dobrowol.styloweplywanie.utils.StudentData;
 
-public class StudentDetailsActivity extends AppCompatActivity implements StudentAdapter.StudentSelectedListener {
+public class StudentDetailsActivity extends AppCompatActivity implements AchievementAdapter.AchievementSelectedListener {
     private static final String KEY = "StudentData";
     private static final int GET_USER_REQUEST = 1;
     private TextView firstLine;
@@ -33,8 +42,12 @@ public class StudentDetailsActivity extends AppCompatActivity implements Student
     private Menu menu;
     private Toolbar myToolbar;
     private ArrayList<StudentData> items;
-    private StudentAdapter adapter;
+
     private RecyclerView itemsView;
+    String[] ListElements = new String[] {  };
+    ArrayList<CharSequence> ListElementsArrayList ;
+    AchievementAdapter adapter ;
+    List<StudentAchievement> bestResults;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,8 +60,11 @@ public class StudentDetailsActivity extends AppCompatActivity implements Student
         imageView = (ImageView) findViewById(R.id.imageView);
         itemsView = (RecyclerView) findViewById(R.id.student_view);
         itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        adapter = new StudentAdapter(this, Picasso.with(this));
+
+
+        adapter = new AchievementAdapter(this);
         itemsView.setAdapter(adapter);
+        bestResults = new ArrayList<>();
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
             studentData = (StudentData) intent.getExtras().getSerializable(KEY);
@@ -62,7 +78,7 @@ public class StudentDetailsActivity extends AppCompatActivity implements Student
     private void fillUserDetails() {
         firstLine.setText(studentData.name + " " + studentData.surname);
         secondLine.setText(studentData.dateOfBirth);
-        thirdLine.setText("Ilość uczniow " + studentData);
+
     }
     public static void startActivity(StudentData studentData, Context context) {
         Intent intent = new Intent(context, StudentDetailsActivity.class);
@@ -71,15 +87,17 @@ public class StudentDetailsActivity extends AppCompatActivity implements Student
         context.startActivity(intent);
 
     }
+
     void fetchAchievements()
     {
         StudentAchievementUtils studentAchievementUtils = new StudentAchievementUtils(new CsvDataUtils(getApplicationContext()));
-        achievementsMap = studentAchievementUtils.fetchStudentAchievement( getApplicationContext(), studentData.dataFile);
-
+        bestResults = studentAchievementUtils.getBestResults(studentData.dataFile);
+        adapter.setItems(bestResults);
     }
 
+
     @Override
-    public void onItemSelected(StudentData item) {
+    public void onItemSelected(StudentAchievement key) {
 
     }
 }

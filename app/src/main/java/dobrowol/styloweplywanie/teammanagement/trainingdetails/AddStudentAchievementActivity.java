@@ -1,6 +1,8 @@
 package dobrowol.styloweplywanie.teammanagement.trainingdetails;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,16 +10,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import dobrowol.styloweplywanie.R;
+import dobrowol.styloweplywanie.teammanagement.AddStudentActivity;
+import dobrowol.styloweplywanie.teammanagement.TrainingManager;
 import dobrowol.styloweplywanie.utils.ConvertUtils;
+import dobrowol.styloweplywanie.utils.CsvDataUtils;
+import dobrowol.styloweplywanie.utils.DatePickerFragment;
 import dobrowol.styloweplywanie.utils.StudentAchievement;
+import dobrowol.styloweplywanie.utils.StudentData;
+import dobrowol.styloweplywanie.utils.TeamData;
+import dobrowol.styloweplywanie.utils.TeamDataUtils;
 
-public class AddStudentAchievementActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddStudentAchievementActivity extends AppCompatActivity implements View.OnClickListener, DatePickerFragment.OnDateSelectedListener, View.OnFocusChangeListener {
 
     public static final String KEY="StudentAchievement";
     private String dataFile;
@@ -26,7 +42,13 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
     private EditText etDate;
     private EditText etTime;
     private EditText etStrokeCount;
+    private Spinner spinnerStudents;
     private FloatingActionButton fbAccept;
+    private TeamData teamData;
+    private Map studentToStudentData;
+    private ArrayList<String> students;
+    private String currentStudent;
+    private Calendar dateOfAchievement;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,9 +60,76 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
         etDate = (EditText) findViewById(R.id.et_newDate);
         etTime = (EditText) findViewById(R.id.et_newTime);
         etStrokeCount = (EditText) findViewById(R.id.et_newStrokeCount);
+        spinnerStudents = (Spinner) findViewById(R.id.spinner_students);
         fbAccept = (FloatingActionButton) findViewById(R.id.fbAccept);
         fbAccept.setOnClickListener(this);
+        etDate.setOnClickListener(this);
+        etDate.setOnFocusChangeListener(this);
+        currentStudent = "";
+        Intent intent = getIntent();
+        if (intent != null & intent.hasExtra(TrainingManager.KEY)) {
+            fetchTeam(intent.getStringExtra(TrainingManager.KEY));
+        }
+        setupSpinner();
     }
+    private void setupSpinner()
+    {
+        if (teamData == null)
+        {
+            spinnerStudents.setVisibility(View.INVISIBLE);
+            return;
+        }
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, students);
+
+        spinnerStudents.setAdapter(adapter1);
+        spinnerStudents.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+
+                        int position = spinnerStudents.getSelectedItemPosition();
+                        currentStudent = students.get(+position);
+                        //Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                });
+    }
+    private void fetchTeam(String teamName) {
+
+        TeamDataUtils teamDataUtils = new TeamDataUtils(getApplicationContext());
+        if (teamName == null || teamName == "")
+        {
+            ArrayList<TeamData> items = teamDataUtils.getTeams();
+            if (items.size()>0) {
+                teamData = items.get(0);
+            }
+        }
+        else {
+            teamData = teamDataUtils.getTeam(teamName);
+        }
+
+
+        if (teamData != null && teamData.students != null) {
+            studentToStudentData = new HashMap(teamData.students.size());
+            students = new ArrayList<>();
+            for (StudentData student : teamData.students) {
+                String studentName = student.name + " " + student.surname;
+                students.add(studentName);
+                studentToStudentData.put(studentName, student);
+            }
+        }
+    }
+
 
 
     @Override
@@ -56,16 +145,71 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
                 studentAchievement.distance = etDistance.getText().toString();
                 studentAchievement.strokeCount = etStrokeCount.getText().toString();
                 studentAchievement.style = etStyle.getText().toString();
-                studentAchievement.time = etTime.getText().toString();
-                Intent returnIntent = new Intent();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(KEY, studentAchievement);
-                returnIntent.putExtras(bundle);
-                setResult(Activity.RESULT_OK,returnIntent);
+                studentAchievement.setTime(etTime.getText().toString());
 
+                if (currentStudent != null)
+                {
+                    StudentData studentData = (StudentData) studentToStudentData.get(currentStudent);
+                    CsvDataUtils csvDataUtils = new CsvDataUtils(AddStudentAchievementActivity.this);
+                    csvDataUtils.saveStudentAchievement(studentAchievement, studentData.dataFile);
+                    clearFields();
+                }
+                else {
+                    Intent returnIntent = new Intent();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(KEY, studentAchievement);
+                    returnIntent.putExtras(bundle);
+                    setResult(Activity.RESULT_OK, returnIntent);
+
+
+                }
                 finish();
                 break;
+            case R.id.et_newDate:
+                Dialog newFragment = new DatePickerFragment(AddStudentAchievementActivity.this, AddStudentAchievementActivity.this);
+                newFragment.show();
+                break;
 
+        }
+    }
+
+
+    public static void startActivity(String teamName, Context context) {
+        Intent intent = new Intent(context, AddStudentAchievementActivity.class);
+        intent.putExtra(TrainingManager.KEY, teamName);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        context.startActivity(intent);
+    }
+
+    private void clearFields() {
+        etDate.setText("");
+        etDistance.setText("");
+        etStrokeCount.setText("");
+        etStyle.setText("");
+        etTime.setText("");
+    }
+
+    @Override
+    public void onDateSelected(Calendar dateOfBirth) {
+        this.dateOfAchievement = dateOfBirth;
+        String formattedDate;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        if (dateOfBirth != null) {
+            formattedDate = sdf.format(dateOfBirth.getTime());
+            etDate.setText(formattedDate);
+        }
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        switch (v.getId()) {
+            case R.id.et_newDate:
+                if (hasFocus) {
+                    Dialog newFragment = new DatePickerFragment(AddStudentAchievementActivity.this, AddStudentAchievementActivity.this);
+                    newFragment.show();
+                }
+                break;
         }
     }
 }

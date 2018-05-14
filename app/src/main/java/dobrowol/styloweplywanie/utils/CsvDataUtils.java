@@ -50,6 +50,7 @@ public class CsvDataUtils {
             e.printStackTrace();
         }
     }
+
     public void saveStudentAchievement(StudentAchievement data, String dataFile)
     {
             data.calculateStrokeIndex();
@@ -89,7 +90,7 @@ public class CsvDataUtils {
                 sa.date = tokens[0];
                 sa.style = tokens[1];
                 sa.distance = tokens[2];
-                sa.time = tokens[3];
+                sa.setTime(tokens[3]);
                 sa.strokeCount = tokens[4];
                 try {
                     sa.strokeIndex = Float.valueOf(tokens[5]);

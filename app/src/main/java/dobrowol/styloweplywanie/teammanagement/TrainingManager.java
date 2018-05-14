@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import dobrowol.styloweplywanie.R;
+import dobrowol.styloweplywanie.teammanagement.trainingdetails.AddStudentAchievementActivity;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
 import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.StudentData;
@@ -48,7 +49,7 @@ import dobrowol.styloweplywanie.welcome.JoinTeamActivity;
 
 public class TrainingManager extends AppCompatActivity implements View.OnClickListener {
     private static final int ADD_TEAM_REQUEST = 1;
-    private static final String KEY = "TeamName";
+    public static final String KEY = "TeamName";
     private static final int ADD_STUDENT_REQUEST = 2;
     private static final int JOIN_TEAM_REQUEST = 3;
     private String currentTime;
@@ -99,6 +100,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
       "25m",
             "50m",
             "5m",
+            "10m",
             "15m",
             "100m",
             "200m",
@@ -266,9 +268,15 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
             case R.id.action_addTeamMember:
                 showAddStudent();
                 return true;
+            case R.id.action_add:
+                showAddAchievement();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showAddAchievement() {
+        AddStudentAchievementActivity.startActivity(teamData.teamName, TrainingManager.this);
     }
 
     private void showAddTeam() {
@@ -354,7 +362,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         int position = info.position;
         selectedTime = (String) listView.getItemAtPosition(position);
-        currentStudentAchievement.time = (String) listView.getItemAtPosition(position);
+        currentStudentAchievement.time = ListElementsArrayList.get(position).toString();
         if (teamData != null) {
             for (StudentData student : teamData.students) {
                 menu.add(0, v.getId(), 0, student.name + " " + student.surname);
@@ -392,7 +400,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 long stopTime = SystemClock.uptimeMillis();
                 long startTime = startedTimer.peekFirst();
                 formatTime(startTime, stopTime);
-                ListElementsArrayList.add(currentTime);
+                ListElementsArrayList.add(String.valueOf(MillisecondTime));
 
                 adapter.notifyDataSetChanged();
                 break;
@@ -429,7 +437,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                     handler.removeCallbacks(runnable);
                 }
                 formatTime(startTime, stopTime);
-                ListElementsArrayList.add(currentTime);
+                ListElementsArrayList.add(String.valueOf(MillisecondTime));
 
                 adapter.notifyDataSetChanged();
                 numberOfRunningStopwatch--;

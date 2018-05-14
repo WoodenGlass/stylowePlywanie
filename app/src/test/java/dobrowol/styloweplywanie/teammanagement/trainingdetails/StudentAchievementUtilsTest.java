@@ -72,9 +72,9 @@ public class StudentAchievementUtilsTest {
         studentAchievements.add(studentAchievement2);
 
         when(csvDataUtils.getStudentAchievements(dataFile)).thenReturn(studentAchievements);
-        Map<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>> achievementsMap = new HashMap<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>>();
+        Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap = new HashMap<StudentAchievementUtils.Key, List<StudentAchievement>>();
         sut = new StudentAchievementUtils(csvDataUtils);
-        achievementsMap = sut.fetchStudentAchievement(contextMock, dataFile);
+        achievementsMap = sut.fetchStudentAchievement(dataFile);
 
         StudentAchievementUtils.Key k  = new StudentAchievementUtils.Key("kraul", "100");
 
@@ -103,13 +103,21 @@ public class StudentAchievementUtilsTest {
         studentAchievements.add(studentAchievement2);
 
         when(csvDataUtils.getStudentAchievements(dataFile)).thenReturn(studentAchievements);
-        Map<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>> achievementsMap = new HashMap<StudentAchievementUtils.Key, List<StudentAchievementUtils.Value>>();
+        Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap = new HashMap<StudentAchievementUtils.Key, List<StudentAchievement>>();
         sut = new StudentAchievementUtils(csvDataUtils);
-        achievementsMap = sut.fetchStudentAchievement(contextMock, dataFile);
+        achievementsMap = sut.fetchStudentAchievement(dataFile);
 
         StudentAchievementUtils.Key k  = new StudentAchievementUtils.Key("kraul", "100");
 
         assertTrue(achievementsMap.containsKey(k));
         assertEquals(achievementsMap.get(k).size(),1);
+    }
+
+    @Test
+    public void getBestResults() {
+    }
+
+    @Test
+    public void getLineDataSets() {
     }
 }
