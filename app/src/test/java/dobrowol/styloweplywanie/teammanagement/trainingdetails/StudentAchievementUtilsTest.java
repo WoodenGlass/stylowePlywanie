@@ -115,6 +115,41 @@ public class StudentAchievementUtilsTest {
 
     @Test
     public void getBestResults() {
+        ArrayList<StudentAchievement> studentAchievements = new ArrayList<>(4);
+        StudentAchievement studentAchievement3 = new StudentAchievement();
+        studentAchievement3.distance = "25";
+        studentAchievement3.style = "żabka";
+        studentAchievement3.strokeIndex=2.2f;
+        studentAchievement3.date = "2018_12.06_16:45.00";
+
+        StudentAchievement studentAchievement4 = new StudentAchievement();
+        studentAchievement4.distance = "25";
+        studentAchievement4.style = "żabka";
+        studentAchievement4.strokeIndex=2.2f;
+        studentAchievement4.date = "2018_12.06_16:45.00";
+
+        StudentAchievement studentAchievement5 = new StudentAchievement();
+        studentAchievement5.distance = "25";
+        studentAchievement5.style = "żabka";
+        studentAchievement5.strokeIndex=2.2f;
+        studentAchievement5.date = "2018_12.06_16:45.00";
+        studentAchievement3.setTime("25.000");
+        studentAchievement4.setTime("24.01");
+        studentAchievement5.setTime("26.404");
+
+        studentAchievements.add(studentAchievement3);
+        studentAchievements.add(studentAchievement4);
+        studentAchievements.add(studentAchievement5);
+
+        when(csvDataUtils.getStudentAchievements(dataFile)).thenReturn(studentAchievements);
+        List<StudentAchievement> bestResults = new  ArrayList<StudentAchievement>();
+        sut = new StudentAchievementUtils(csvDataUtils);
+        bestResults = sut.getBestResults(dataFile);
+
+        assertEquals(bestResults.size(), 1);
+        StudentAchievement best = bestResults.get(0);
+        assertEquals(best.time,"24010");
+
     }
 
     @Test
