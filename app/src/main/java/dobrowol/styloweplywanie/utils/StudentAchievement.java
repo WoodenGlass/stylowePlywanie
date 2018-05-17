@@ -181,13 +181,13 @@ public class StudentAchievement implements Serializable {
         Integer extractedTime = 0;
         Integer[]base = {1000*60, 1000};
 
-        if (time.matches("([0-9]+):([0-9]+).([0-9]+)")) {
+        if (time.matches("([0-9]+):([0-9]+)\\.([0-9]+)")) {
             extractedTime = matchFirstPattern(time);
         }
         else if (time.matches("([0-9]+):([0-9]+)")) {
             extractedTime = matchSecondPattern(time);
         }
-        else if (time.matches("([0-9]+).([0-9]+)")) {
+        else if (time.matches("([0-9]+)\\.([0-9]+)")) {
                 extractedTime = matchThirdPattern(time);
         }
 
@@ -200,7 +200,7 @@ public class StudentAchievement implements Serializable {
         Integer minutes = value/60000;
         Integer seconds = (value%60000)/1000;
         Integer milli = value%1000;
-        formattedTime = minutes.toString() +":"+seconds.toString()+"."+milli.toString();
+        formattedTime = String.format("%02d:%02d.%03d",minutes,seconds,milli);
         return formattedTime;
     }
     int time2seconds(String time)

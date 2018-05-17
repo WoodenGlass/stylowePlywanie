@@ -3,6 +3,7 @@ package dobrowol.styloweplywanie.teammanagement;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -110,6 +111,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     ArrayList<String> strokeCount;
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Intent startIntent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://play.google.com/store/apps/details?id=dobrowol.styloweplywanie"));
+        //startActivity(startIntent);
         setContentView(R.layout.activity_trainingmanager);
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
@@ -312,7 +315,11 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         }
             else if (requestCode == ADD_TEAM_REQUEST) {
                 if(resultCode == Activity.RESULT_OK) {
-                    fetchTeam( data.getStringExtra(CreateTeamActivity.RETURNED_DATA_KEY));
+                    String teamName = data.getStringExtra(CreateTeamActivity.RETURNED_DATA_KEY);
+                    if (teamName != null && teamName != "") {
+                        fetchTeam(teamName);
+
+                    }
                 }
         }
         else if (requestCode == JOIN_TEAM_REQUEST) {
@@ -343,6 +350,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
         if (the_menu != null) {
             the_menu.findItem(R.id.action_addTeamMember).setVisible(true).setEnabled(true);
+            the_menu.findItem(R.id.action_add).setVisible(true).setEnabled(true);
         }
         studentToStudentData = new HashMap(teamData.students.size());
         for (StudentData student: teamData.students) {
@@ -521,9 +529,11 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         the_menu = menu;
         if (teamData == null) {
             menu.findItem(R.id.action_addTeamMember).setVisible(false).setEnabled(false);
+            menu.findItem(R.id.action_add).setVisible(false).setEnabled(false);
         }
         else {
             the_menu.findItem(R.id.action_addTeamMember).setVisible(true).setEnabled(true);
+            the_menu.findItem(R.id.action_add).setVisible(true).setEnabled(true);
         }
         return true;
     }

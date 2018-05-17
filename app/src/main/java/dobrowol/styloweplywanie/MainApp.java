@@ -2,7 +2,6 @@ package dobrowol.styloweplywanie;
 
 import android.app.Application;
 
-import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
 
@@ -21,6 +20,5 @@ public class MainApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ACRA.init(this);
     }
 }

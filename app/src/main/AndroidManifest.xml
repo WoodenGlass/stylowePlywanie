@@ -15,14 +15,6 @@
         android:supportsRtl="true"
         android:name=".MainApp"
         >
-        <activity android:name=".MainActivity">
-
-        </activity>
-        <activity android:name=".welcome.InitialWelcome">
-
-            <!-- The meta-data tag is required if you support API level 15 and lower -->
-
-        </activity>
         <activity android:name=".welcome.CreateTeamActivity"
             android:parentActivityName=".welcome.InitialWelcome" >
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -92,7 +84,28 @@
             >
 
         </activity>
-
+        <receiver android:enabled="true" android:exported="true" android:label="BootService" android:name=".BootService">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_INSTALL"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_CHANGED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

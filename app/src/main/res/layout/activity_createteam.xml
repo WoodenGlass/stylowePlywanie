@@ -12,7 +12,11 @@
         android:hint="Nazwa Zespołu"
         android:ems="10"
         android:id="@+id/editText_CreateTeamActivity_TeamName" />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_wrongTeamName"
+        android:visibility="invisible"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,6 +24,11 @@
         android:hint="Imie i Nazwisko Trenera"
         android:ems="10"
         android:id="@+id/editText_CreateTeamActivity_CoachName" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_wrongCoachName"
+        android:visibility="invisible"/>
 
     <Button
         android:text="Utwórz"
