@@ -3,6 +3,8 @@ package dobrowol.styloweplywanie.teammanagement;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +27,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +42,7 @@ import java.util.Map;
 import dobrowol.styloweplywanie.R;
 import dobrowol.styloweplywanie.teammanagement.trainingdetails.AddStudentAchievementActivity;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
+import dobrowol.styloweplywanie.utils.NewVersionChecker;
 import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.StudentData;
 import dobrowol.styloweplywanie.utils.TeamData;
@@ -111,8 +117,8 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     ArrayList<String> strokeCount;
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Intent startIntent = new Intent(Intent.ACTION_VIEW , Uri.parse("https://play.google.com/store/apps/details?id=dobrowol.styloweplywanie"));
-        //startActivity(startIntent);
+
+        checkForNewVersion();
         setContentView(R.layout.activity_trainingmanager);
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
@@ -167,6 +173,23 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         getWindow().setAttributes(params);
 
     }
+
+    private void checkForNewVersion() {
+
+        PackageInfo pinfo = null;
+        try {
+            pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String versionName = pinfo.versionName;
+
+        NewVersionChecker newVersionChecker = new NewVersionChecker(versionName, TrainingManager.this);
+        newVersionChecker.execute();
+
+    }
+
     private void updateStrokeIndex()
     {
         currentStudentAchievement.calculateStrokeIndex();

@@ -195,7 +195,17 @@ public class XMLDataUtil implements IDataUtil {
             NodeList nodeTeamName = (NodeList) exprTeamName.evaluate(doc, XPathConstants.NODESET);
             NamedNodeMap map = nodeTeamName.item(0).getAttributes();
 
-            teamData= new TeamData(map.getNamedItem("name").getNodeValue(), nodeCoachName.item(0).getNodeValue());
+
+            if (nodeCoachName!= null && nodeCoachName.item(0) != null && map!= null &&  map.getNamedItem("name") != null) {
+                String teamName = map.getNamedItem("name").getNodeValue();
+                if (teamName != "") {
+                    teamData = new TeamData(teamName, nodeCoachName.item(0).getNodeValue());
+                }
+                else
+                    return null;
+            }
+            else
+                return null;
 
             XPathExpression exprStudents = xpath.compile("/Team/Students/Student");
 
@@ -222,7 +232,6 @@ public class XMLDataUtil implements IDataUtil {
                 else
                 {
                     studentData.dataFile = studentData.name+studentData.surname+".csv";
-                    //studentData.dataFile = studentData.dataFile.toLowerCase();
                     createDataFile(studentData.dataFile);
                 }
                 teamData.addStudent(studentData);

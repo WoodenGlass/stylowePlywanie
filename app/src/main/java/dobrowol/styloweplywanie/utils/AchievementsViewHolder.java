@@ -83,7 +83,7 @@ public class AchievementsViewHolder extends RecyclerView.ViewHolder implements V
         strokeCountTv.setOnClickListener(this);
         timeTv.setOnClickListener(this);
         dateTv.setOnClickListener(this);
-
+        setSoftkeyEnterListener();
        /* dateTv.setVisibility(View.INVISIBLE);
         strokeCountTv.setVisibility(View.INVISIBLE);
         distanceTv.setVisibility(View.INVISIBLE);
@@ -102,7 +102,7 @@ public class AchievementsViewHolder extends RecyclerView.ViewHolder implements V
         styleTv.setText(studentAchievement.style);
         distanceTv.setText(studentAchievement.distance);
         strokeCountTv.setText(studentAchievement.strokeCount);
-        timeTv.setText(studentAchievement.time);
+        timeTv.setText(studentAchievement.formatTime());
         dateTv.setText(studentAchievement.displayDate());
     }
 
@@ -184,33 +184,47 @@ public class AchievementsViewHolder extends RecyclerView.ViewHolder implements V
                 break;
         }
     }
-    private void captureDate() throws ParseException {
+    private void captureDate() {
         String date = dateEt.getText().toString();
-        String formattedDate;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        if (date != null) {
-            sdf.parse(date);
-
-                studentAchievement.date = date;
-
-
-        }
+        studentAchievement.setDate(ConvertUtils.stringToDate(date));
     }
     private void captureAchievement()
     {
-        studentAchievement.time = timeET.getText().toString();
+        studentAchievement.setTime(timeET.getText().toString());
         studentAchievement.strokeCount = strokeCountEt.getText().toString();
         studentAchievement.distance = distanceEt.getText().toString();
         studentAchievement.style = styleEt.getText().toString();
         studentAchievement.calculateStrokeIndex();
-        try {
-            captureDate();
-            listener.onItemSelected(studentAchievement, getAdapterPosition());
-        } catch (ParseException e) {
-            e.printStackTrace();
-            dateEt.setText("should be dd/MM/YYYY");
-            //dateEt.selectAll();
-        }
+        captureDate();
+        listener.onItemSelected(studentAchievement, getAdapterPosition());
+
+    }
+    private void setSoftkeyEnterListener()
+    {
+        View.OnKeyListener onKeyListener = new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            captureAchievement();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        };
+        dateEt.setOnKeyListener(onKeyListener);
+        distanceEt.setOnKeyListener(onKeyListener);
+        strokeCountEt.setOnKeyListener(onKeyListener);
+        styleEt.setOnKeyListener(onKeyListener);
+        timeET.setOnKeyListener(onKeyListener);
 
     }
     @Override

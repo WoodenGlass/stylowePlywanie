@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import dobrowol.styloweplywanie.R;
+import dobrowol.styloweplywanie.teammanagement.trainingdetails.StudentAchievementChartActivity;
 import dobrowol.styloweplywanie.teammanagement.trainingdetails.StudentAchievementUtils;
 import dobrowol.styloweplywanie.utils.AchievementAdapter;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
@@ -98,6 +99,11 @@ public class StudentDetailsActivity extends AppCompatActivity implements Achieve
 
     @Override
     public void onItemSelected(StudentAchievement key) {
-
+        Intent intent = new Intent(StudentDetailsActivity.this, StudentAchievementChartActivity.class);
+        intent.putExtra(StudentAchievementChartActivity.KEY, studentData.dataFile);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(StudentAchievementChartActivity.SECONDARY_KEY, key);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

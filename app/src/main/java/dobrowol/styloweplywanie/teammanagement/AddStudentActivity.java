@@ -13,9 +13,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import dobrowol.styloweplywanie.R;
 import dobrowol.styloweplywanie.utils.DatePickerFragment;
+import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.StudentData;
 import dobrowol.styloweplywanie.utils.TeamData;
 import dobrowol.styloweplywanie.utils.TeamDataUtils;
@@ -159,6 +161,31 @@ public class AddStudentActivity extends FragmentActivity implements View.OnClick
         {
             addStudentOk.setEnabled(true);
         }
+    }
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("DUPA"," saveInstance");
+        outState.putBoolean("dateOfBirthOk", dateOfBirthOk);
+        outState.putBoolean("nameOk", nameOk);
+        outState.putBoolean("surnameOk", surnameOk);
+
+        outState.putString("studentAge", studentAge.getText().toString());
+
+        outState.putString("studentName", studentName.getText().toString());
+        outState.putString("studentSurname", studentSurname.getText().toString());
+
+
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        dateOfBirthOk = savedInstanceState.getBoolean("dateOfBirthOk");
+        nameOk = savedInstanceState.getBoolean("nameOk");
+        surnameOk = savedInstanceState.getBoolean("surnameOk");
+
+        studentName.setText(savedInstanceState.getString("studentName"));
+        studentSurname.setText(savedInstanceState.getString("studentSurname"));
+        studentAge.setText(savedInstanceState.getString("studentAge"));
     }
 }
 

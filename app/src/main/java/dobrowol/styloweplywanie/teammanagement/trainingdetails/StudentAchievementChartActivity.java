@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,8 +51,11 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
     private LineChart lineChart;
     private String dataFile;
     public static final String KEY = "DataFile";
+    public static final String SECONDARY_KEY = "Achievement";
     private Spinner labelSpinner;
+    private StudentAchievement baseStudentAchievement;
     private ArrayList<String> currentXaxisLabels;
+    private ArrayList<String> currentYaxisLabels;
     private Map<Integer, StudentAchievementUtils.Key> positionToKey;
     private Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap;
 
@@ -60,7 +66,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
 
         setContentView(R.layout.activity_studentachievementchart);
         lineChart = (LineChart) findViewById(chart);
-        labelSpinner = (Spinner) findViewById(R.id.labelsSpinner);
+        //labelSpinner = (Spinner) findViewById(R.id.labelsSpinner);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
          // add entries to dataset
@@ -72,7 +78,12 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         if (intent != null & intent.hasExtra(KEY)) {
             dataFile= intent.getExtras().getString(KEY);
         }
+        if (intent != null & intent.hasExtra(SECONDARY_KEY))
+        {
+            baseStudentAchievement = (StudentAchievement) intent.getExtras().getSerializable(SECONDARY_KEY);
+        }
         currentXaxisLabels = new ArrayList<>();
+        currentYaxisLabels = new ArrayList<>();
         fetchStudentAchievement();
 
     }
@@ -85,6 +96,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         dataSet.setFillColor(Color.rgb(0, 0, 0));
         dataSet.setLineWidth(0.2f);
         LineData lineData = new LineData(dataSet);
+        lineData.setValueFormatter(new MyValueFormatter());
 
         XAxis x = lineChart.getXAxis();
         x.setEnabled(true);
@@ -97,8 +109,16 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         YAxis y = lineChart.getAxisLeft();
         y.setEnabled(true);
         y.setDrawGridLines(false);
+        y.setValueFormatter(new MyYAxisValueFormatter(currentYaxisLabels));
+        y.setGranularity(1000f);
+
+        YAxis y2 = lineChart.getAxisRight();
+        y2.setEnabled(false);
+
         lineChart.setData(lineData);
         lineChart.invalidate();
+
+
 
     }
     public static void startActivity(String dataFile, Context context) {
@@ -111,21 +131,31 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
     {
         LineDataSet lineDataSet;
         StudentAchievementUtils.Key k = positionToKey.get(position);
-        List<StudentAchievement> values = achievementsMap.get(positionToKey.get(position));
+        lineDataSet = getLineDataSet(achievementsMap, positionToKey.get(position));
+
+        return lineDataSet;
+    }
+
+    @NonNull
+    private LineDataSet getLineDataSet(Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap, StudentAchievementUtils.Key k) {
+        LineDataSet lineDataSet;
+        List<StudentAchievement> values = achievementsMap.get(k);
 
         List<Entry> entries = new ArrayList<Entry>();
 
         int i = 0;
-            // turn your data into Entry objects
+        // turn your data into Entry objects
         for (StudentAchievement v : values) {
-            entries.add(new Entry(i++, Float.valueOf(v.strokeIndex)));
+            entries.add(new Entry(i++, Float.valueOf(v.time)));
             currentXaxisLabels.add(v.date);
+            currentYaxisLabels.add(v.time);
         }
 
         lineDataSet =  new LineDataSet(entries, "Stroke index of " + k.style + " " + k.distance);
-
+        lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         return lineDataSet;
     }
+
     private void fetchStudentAchievement()
     {
         studentAchievementUtils = new StudentAchievementUtils(new CsvDataUtils(getApplicationContext()));
@@ -144,8 +174,8 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, labels);
 
-        labelSpinner.setAdapter(adapter1);
-        labelSpinner.setOnItemSelectedListener(
+       // labelSpinner.setAdapter(adapter1);
+      /*  labelSpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
 
                     @Override
@@ -165,8 +195,14 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
 
                     }
 
-                });
+                });*/
+        if (baseStudentAchievement != null)
+        {
+            //labelSpinner.getSelectedItemPosition();
+            StudentAchievementUtils.Key key = new StudentAchievementUtils.Key(baseStudentAchievement.style, baseStudentAchievement.distance);
 
+            drawLineChart(getLineDataSet(achievementsMap,key));
+        }
         //}
     }
 
@@ -178,6 +214,37 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         //StudentAchievementActivity.startActivity(dataFile, StudentAchievementChartActivity.this);
     }
 
+    public class MyYAxisValueFormatter implements IAxisValueFormatter{
+    private List<String> mValues;
+
+    public MyYAxisValueFormatter(List<String> values) {
+        this.mValues = values;
+    }
+
+    @Override
+    public String getFormattedValue(float value, AxisBase axis) {
+        // "value" represents the position of the label on the axis (x or y)
+        int index = (int)value;
+        String fValue=String.valueOf(index);
+
+        fValue = ConvertUtils.formatTime(fValue);
+
+        return fValue;
+    }
+}
+    public class MyValueFormatter implements IValueFormatter {
+
+        @Override
+        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+            // write your logic here
+            int index = (int)value;
+            String fValue=String.valueOf(index);
+
+            fValue = ConvertUtils.formatTime(fValue);
+
+            return fValue;
+        }
+    }
     public class MyXAxisValueFormatter implements IAxisValueFormatter {
 
         private List<String> mValues;

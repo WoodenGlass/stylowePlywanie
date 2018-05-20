@@ -96,24 +96,6 @@ public class StudentAchievement implements Serializable {
     {
         time = extractTime(given_time);
     }
-    private int minutesToMillis(String time)
-    {
-        String[] minsTokens = time.split(":");
-        if (minsTokens.length > 1)
-        {
-            return Integer.parseInt(minsTokens[0])*60000;
-        }
-        return 0;
-    }
-    private int secondsToMillis(String time)
-    {
-        String[] secTokens = time.split(":");
-        if (secTokens.length > 1)
-        {
-            return Integer.parseInt(secTokens[1])*60000;
-        }
-        return 0;
-    }
     private Integer matchFirstPattern(String time)
     {
         Integer extractedTime = 0;
@@ -195,13 +177,7 @@ public class StudentAchievement implements Serializable {
     }
     public String formatTime()
     {
-        String formattedTime = "";
-        Integer value = Integer.parseInt(time);
-        Integer minutes = value/60000;
-        Integer seconds = (value%60000)/1000;
-        Integer milli = value%1000;
-        formattedTime = String.format("%02d:%02d.%03d",minutes,seconds,milli);
-        return formattedTime;
+        return ConvertUtils.formatTime(time);
     }
     int time2seconds(String time)
     {
