@@ -39,7 +39,8 @@
                     app:srcCompat="@drawable/ic_people_black_24dp"
                     android:minHeight="64dp"
                     android:minWidth="64dp"
-                    android:id="@+id/imageView" />
+                    android:id="@+id/imageView"
+                    tools:ignore="VectorDrawableCompat" />
 
                 <include layout="@layout/details_labels" />
                 <RatingBar

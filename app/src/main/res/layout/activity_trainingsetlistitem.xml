@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/tools"
     app:cardElevation="4dp"
     app:contentPadding="4dp"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="true"
+    android:background="@null"
+    >
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="4dp">
+    android:padding="4dp"
+    android:background="@drawable/gradient">
 
 
     <TextView
@@ -19,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-
+        android:background="@null"
         android:padding="16dp"
         android:id="@+id/distance_textView" />
 
@@ -29,7 +32,7 @@
         android:layout_height="wrap_content"
 
         android:padding="16dp"
-
+        android:background="@null"
         android:id="@+id/style_textView"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/distance_textView"
@@ -41,7 +44,7 @@
         android:layout_height="wrap_content"
 
         android:padding="16dp"
-
+        android:background="@null"
         android:id="@+id/description_textView"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/style_textView"

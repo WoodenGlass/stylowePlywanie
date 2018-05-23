@@ -20,12 +20,12 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentViewHolder> {
     private StudentSelectedListener listener;
     private Picasso imageLoader;
 
-    public StudentAdapter(StudentSelectedListener listener, Picasso imageLoader)
+    public StudentAdapter(StudentSelectedListener listener)
     {
 
         this.listener = listener;
 
-        this.imageLoader = imageLoader;
+        //this.imageLoader = imageLoader;
     }
     @Override
     public StudentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

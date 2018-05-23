@@ -21,12 +21,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<ViewHolder> {
     private ItemsSelectedListener listener;
     private Picasso imageLoader;
 
-    public ItemsAdapter(ItemsSelectedListener listener, Picasso imageLoader)
+    public ItemsAdapter(ItemsSelectedListener listener)
     {
 
         this.listener = listener;
 
-        this.imageLoader = imageLoader;
+        //this.imageLoader = imageLoader;
     }
     public void removeItem(int position) {
         TeamData teamData = items.get(position);

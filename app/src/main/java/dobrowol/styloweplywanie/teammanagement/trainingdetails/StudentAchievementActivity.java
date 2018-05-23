@@ -62,7 +62,7 @@ public class StudentAchievementActivity extends AppCompatActivity implements Vie
         itemsView = (RecyclerView) findViewById(R.id.items_view);
         itemsView.setLayoutManager(new WrapContentLinearLayoutManager(this, RecyclerView.VERTICAL, false));
         //registerForContextMenu(itemsView);
-        adapter = new AchievementsItemsAdapter(this, Picasso.with(this));
+        adapter = new AchievementsItemsAdapter(this);
         itemsView.setAdapter(adapter);
 
 

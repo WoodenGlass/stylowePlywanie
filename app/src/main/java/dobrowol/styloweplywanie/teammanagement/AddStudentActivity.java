@@ -100,6 +100,7 @@ public class AddStudentActivity extends FragmentActivity implements View.OnClick
         studentData.setName(String.valueOf(studentName.getText()));
         studentData.setSurname(String.valueOf(studentSurname.getText()));
         studentData.setDateOfBirth(dateOfBirth);
+        studentData.image="";
         teamData.addStudent(studentData);
         teamDataUtils.updateTeam(teamData);
         Intent returnIntent = new Intent();

@@ -52,7 +52,7 @@ public class JoinTeamActivity extends AppCompatActivity implements ItemsAdapter.
         itemsView = (RecyclerView) findViewById(R.id.items_view);
         itemsView.setLayoutManager(new WrapContentLinearLayoutManager(this, RecyclerView.VERTICAL, false));
         //registerForContextMenu(itemsView);
-        adapter = new ItemsAdapter(this, Picasso.with(this));
+        adapter = new ItemsAdapter(this);
         itemsView.setAdapter(adapter);
 
         teamUtils = new TeamDataUtils(getApplicationContext());

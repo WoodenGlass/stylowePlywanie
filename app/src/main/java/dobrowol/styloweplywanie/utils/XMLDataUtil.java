@@ -110,6 +110,12 @@ public class XMLDataUtil implements IDataUtil {
                 Element dataFile = doc.createElement("dataFile");
                 dataFile.appendChild(doc.createTextNode(studentData.dataFile));
                 student.appendChild(dataFile);
+                Element image = doc.createElement("image");
+                if (studentData.image == null){
+                    studentData.image="";
+                }
+                image.appendChild(doc.createTextNode(studentData.image));
+                student.appendChild(image);
                 students.appendChild(student);
             }
             rootElement.appendChild(students);
@@ -221,6 +227,7 @@ public class XMLDataUtil implements IDataUtil {
                 Node surnameNode = el.getElementsByTagName("surname").item(0);
                 Node ageNode = el.getElementsByTagName("dateOfBirth").item(0);
                 Node dataFile = el.getElementsByTagName("dataFile").item(0);
+                Node image = el.getElementsByTagName("image").item(0);
                 if (nameNode !=null && nameNode.getFirstChild() != null)
                     studentData.name = nameNode.getFirstChild().getNodeValue();
                 if (surnameNode != null && surnameNode.getFirstChild() != null)
@@ -234,6 +241,9 @@ public class XMLDataUtil implements IDataUtil {
                     studentData.dataFile = studentData.name+studentData.surname+".csv";
                     createDataFile(studentData.dataFile);
                 }
+                if (image !=null && image.getFirstChild() != null)
+                    studentData.image = image.getFirstChild().getNodeValue();
+
                 teamData.addStudent(studentData);
             }
             XPathExpression exprStyles = xpath.compile("/Team/Styles/Style");

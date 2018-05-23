@@ -27,7 +27,7 @@ public class AchievementAdapter extends RecyclerView.Adapter<AchievementViewHold
     }
     @Override
     public AchievementViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View listItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.trainingsetitem, parent, false);
+        View listItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_trainingsetlistitem, parent, false);
         return new AchievementViewHolder(listItemView, listener);
     }
 

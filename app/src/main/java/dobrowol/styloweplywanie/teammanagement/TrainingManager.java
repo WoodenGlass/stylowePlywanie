@@ -3,37 +3,35 @@ package dobrowol.styloweplywanie.teammanagement;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +40,7 @@ import java.util.Map;
 import dobrowol.styloweplywanie.R;
 import dobrowol.styloweplywanie.teammanagement.trainingdetails.AddStudentAchievementActivity;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
-import dobrowol.styloweplywanie.utils.NewVersionChecker;
+import dobrowol.styloweplywanie.utils.ResultsAdapter;
 import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.StudentData;
 import dobrowol.styloweplywanie.utils.TeamData;
@@ -54,7 +52,7 @@ import dobrowol.styloweplywanie.welcome.JoinTeamActivity;
  * Created by dobrowol on 08.01.18.
  */
 
-public class TrainingManager extends AppCompatActivity implements View.OnClickListener {
+public class TrainingManager extends AppCompatActivity implements View.OnClickListener, ResultsAdapter.ResultsSelectedListener {
     private static final int ADD_TEAM_REQUEST = 1;
     public static final String KEY = "TeamName";
     private static final int ADD_STUDENT_REQUEST = 2;
@@ -73,9 +71,9 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     Long[] startedListElements = new Long[]{};
     LinkedList<Long> startedTimer;
     List<Long> stoppedTimer;
-    ArrayList<CharSequence> ListElementsArrayList ;
-    ArrayAdapter<CharSequence> adapter ;
-    ListView listView;
+    ArrayList<String> ListElementsArrayList ;
+    ResultsAdapter adapter ;
+    RecyclerView listView;
     TeamData teamData;
     Map studentToStudentData;
     Integer timeToSave;
@@ -84,7 +82,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     private StudentAchievement currentStudentAchievement;
     Spinner spnr;
     Spinner spnrDistance;
-    Spinner spnrStrokeCount;
+    EditText editStrokeCount;
     Button btnSave;
     private int numberOfRunningStopwatch;
 
@@ -118,7 +116,6 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        checkForNewVersion();
         setContentView(R.layout.activity_trainingmanager);
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
@@ -141,25 +138,28 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         mStudentName = (TextView) findViewById(R.id.tvStudentName);
         mStrokeIndex = (TextView) findViewById(R.id.tvSrokeIndex);
         mStopBtn = (TextView) findViewById(R.id.tvStopBtn);
-
+        mStopBtn.setOnClickListener(this);
         btnReset.setEnabled(false);
         btnStop.setEnabled(false);
         btnLap.setEnabled(false);
 
         handler = new Handler() ;
         startedTimer = new LinkedList<Long>(Arrays.asList(startedListElements));
-        ListElementsArrayList = new ArrayList<CharSequence>(Arrays.asList(ListElements));
-        adapter = new ArrayAdapter<CharSequence>(TrainingManager.this,
+        ListElementsArrayList = new ArrayList<>(Arrays.asList(ListElements));
+        /*adapter = new ArrayAdapter<CharSequence>(TrainingManager.this,
                 android.R.layout.simple_list_item_1,
                 ListElementsArrayList
-        );
-        listView = (ListView)findViewById(R.id.listview1);
+        );*/
+        adapter = new ResultsAdapter(this);
+        listView = (RecyclerView)findViewById(R.id.listview1);
+        listView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+
         listView.setAdapter(adapter);
         listView.setOnCreateContextMenuListener(this);
 
         spnr = (Spinner)findViewById(R.id.tmSpinner);
         spnrDistance = (Spinner)findViewById(R.id.tmDistanceSpinner);
-        spnrStrokeCount = (Spinner)findViewById(R.id.tmStrokeCountSpinner);
+        editStrokeCount = findViewById(R.id.tmStrokeCountEditText);
         setupSpinner();
         btnSave = (Button) findViewById(R.id.btnSaveAchievement);
         btnSave.setOnClickListener(this);
@@ -172,24 +172,29 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         params.screenBrightness = 1;
         getWindow().setAttributes(params);
 
+        setupTouchInterceptor();
     }
-
-    private void checkForNewVersion() {
-
-        PackageInfo pinfo = null;
-        try {
-            pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+private void setupTouchInterceptor()
+{
+    FrameLayout touchInterceptor = (FrameLayout)findViewById(R.id.touchInterceptor);
+    touchInterceptor.setOnTouchListener(new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (editStrokeCount.isFocused()) {
+                    Rect outRect = new Rect();
+                    editStrokeCount.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        editStrokeCount.clearFocus();
+                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                }
+            }
+            return false;
         }
-
-        String versionName = pinfo.versionName;
-
-        NewVersionChecker newVersionChecker = new NewVersionChecker(versionName, TrainingManager.this);
-        newVersionChecker.execute();
-
-    }
-
+    });
+}
     private void updateStrokeIndex()
     {
         currentStudentAchievement.calculateStrokeIndex();
@@ -234,7 +239,9 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
                         int position = spnrDistance.getSelectedItemPosition();
                         currentStudentAchievement.distance = distances[+position];
-                        updateStrokeIndex();
+                        if (currentStudentAchievement.strokeCount!= null) {
+                            updateStrokeIndex();
+                        }
                         //Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
                         // TODO Auto-generated method stub
                     }
@@ -254,28 +261,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, strokeCount);
 
-        spnrStrokeCount.setAdapter(adapter2);
-        spnrStrokeCount.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
 
-                    @Override
-                    public void onItemSelected(AdapterView<?> arg0, View arg1,
-                                               int arg2, long arg3) {
-
-                        int position = spnrStrokeCount.getSelectedItemPosition();
-                        currentStudentAchievement.strokeCount = strokeCount.get(+position);
-                        updateStrokeIndex();
-                        //Toast.makeText(getApplicationContext(),"You have selected "+strokeCount.get(+position),Toast.LENGTH_SHORT).show();
-                        // TODO Auto-generated method stub
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> arg0) {
-                        // TODO Auto-generated method stub
-
-                    }
-
-                });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -390,11 +376,12 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     }
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-        int position = info.position;
-        selectedTime = (String) listView.getItemAtPosition(position);
-        currentStudentAchievement.time = ListElementsArrayList.get(position).toString();
+        //AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        //int position = info.position;
+       // selectedTime = (String) listView.getItemAtPosition(position);
+        //currentStudentAchievement.time = ListElementsArrayList.get(position).toString();
         if (teamData != null) {
+            fetchTeam(teamData.teamName);
             for (StudentData student : teamData.students) {
                 menu.add(0, v.getId(), 0, student.name + " " + student.surname);
             }
@@ -413,6 +400,13 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        v.requestFocusFromTouch();
+
+        if (v.getId() != R.id.tmStrokeCountEditText) {
+            View focusableView = v.focusSearch(View.FOCUS_DOWN);
+            if(focusableView != null) focusableView.requestFocus();
+
+        }
         switch (v.getId())
         {
             case R.id.btnStart:
@@ -432,7 +426,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 long startTime = startedTimer.peekFirst();
                 formatTime(startTime, stopTime);
                 ListElementsArrayList.add(String.valueOf(MillisecondTime));
-
+                adapter.setItems(ListElementsArrayList);
                 adapter.notifyDataSetChanged();
                 break;
             }
@@ -449,6 +443,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 currentTime = "00:00.000";
                 mTimerView.setText(currentTime);
                 ListElementsArrayList.clear();
+                adapter.setItems(ListElementsArrayList);
                 adapter.notifyDataSetChanged();
                 btnReset.setEnabled(false);
                 btnStop.setEnabled(false);
@@ -469,7 +464,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
                 }
                 formatTime(startTime, stopTime);
                 ListElementsArrayList.add(String.valueOf(MillisecondTime));
-
+                adapter.setItems(ListElementsArrayList);
                 adapter.notifyDataSetChanged();
                 numberOfRunningStopwatch--;
                 mStopBtn.setText("STOP ("+numberOfRunningStopwatch+")");
@@ -507,7 +502,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     };
 
     private void formatTime(long startTime, long endTime) {
-         MillisecondTime = endTime - startTime;
+        MillisecondTime = endTime - startTime;
 
         Seconds = (int) (MillisecondTime / 1000);
 
@@ -523,10 +518,10 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d("DUPA"," saveInstance");
-        outState.putInt("strokeCount", spnrStrokeCount.getSelectedItemPosition());
+        outState.putString("strokeCount", editStrokeCount.getText().toString());
         outState.putInt("distance", spnrDistance.getSelectedItemPosition());
         outState.putInt("style", spnr.getSelectedItemPosition());
-        outState.putCharSequenceArrayList("listOfElementsArray", ListElementsArrayList);
+        outState.putStringArrayList("listOfElementsArray", ListElementsArrayList);
         outState.putString("currentTime", mTimerView.getText().toString());
         outState.putSerializable("currentStudentAchievement", currentStudentAchievement);
         outState.putString("studentName", mStudentName.getText().toString());
@@ -536,11 +531,12 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        spnrStrokeCount.setSelection(savedInstanceState.getInt("strokeCount"));
+        editStrokeCount.setText(savedInstanceState.getString("strokeCount"));
         spnrDistance.setSelection(savedInstanceState.getInt("distance"));
         spnr.setSelection(savedInstanceState.getInt("style"));
-        ListElementsArrayList = savedInstanceState.getCharSequenceArrayList("listOfElementsArray");
+        ListElementsArrayList = savedInstanceState.getStringArrayList("listOfElementsArray");
         Toast.makeText(getApplicationContext(),"number of elements in list " + ListElementsArrayList.size(),Toast.LENGTH_SHORT).show();
+        adapter.setItems(ListElementsArrayList);
         adapter.notifyDataSetChanged();
         currentStudentAchievement = (StudentAchievement) savedInstanceState.getSerializable("currentStudentAchievement");
         updateStrokeIndex();
@@ -559,5 +555,16 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
             the_menu.findItem(R.id.action_add).setVisible(true).setEnabled(true);
         }
         return true;
+    }
+
+    @Override
+    public void onItemSelected(String key) {
+
+    }
+
+    @Override
+    public void onItem(int position) {
+        //currentTime = ListElementsArrayList.get(position);
+        currentStudentAchievement.time = ListElementsArrayList.get(position).toString();
     }
 }

@@ -59,7 +59,7 @@ public class TeamDetailsActivity extends AppCompatActivity implements StudentAda
         imageView = (ImageView) findViewById(R.id.imageView);
         itemsView = (RecyclerView) findViewById(R.id.student_view);
         itemsView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        adapter = new StudentAdapter(this, Picasso.with(this));
+        adapter = new StudentAdapter(this);
         itemsView.setAdapter(adapter);
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {

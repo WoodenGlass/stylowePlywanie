@@ -22,12 +22,12 @@ public class AchievementsItemsAdapter extends RecyclerView.Adapter<AchievementsV
     private ItemsSelectedListener listener;
     private Picasso imageLoader;
 
-    public AchievementsItemsAdapter(ItemsSelectedListener listener, Picasso imageLoader)
+    public AchievementsItemsAdapter(ItemsSelectedListener listener)
     {
 
         this.listener = listener;
 
-        this.imageLoader = imageLoader;
+        //this.imageLoader = imageLoader;
     }
     public void removeItem(int position) {
         StudentAchievement teamData = items.get(position);

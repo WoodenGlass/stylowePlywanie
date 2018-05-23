@@ -57,7 +57,7 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
         itemsView = (RecyclerView) findViewById(R.id.items_view);
         itemsView.setLayoutManager(new WrapContentLinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        adapter = new StudentAdapter(this, Picasso.with(this));
+        adapter = new StudentAdapter(this);
         itemsView.setAdapter(adapter);
         teamUtils = new TeamDataUtils(getApplicationContext());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);

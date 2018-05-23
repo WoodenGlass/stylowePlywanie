@@ -12,6 +12,7 @@ public class StudentData implements Serializable{
     public String surname;
     public String dateOfBirth;
     public String dataFile;
+    public String image;
 
     public void setDateOfBirth(Calendar dateOfBirth) {
         String formatted="";

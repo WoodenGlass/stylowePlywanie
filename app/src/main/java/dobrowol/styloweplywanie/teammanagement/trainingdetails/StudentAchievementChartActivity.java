@@ -27,6 +27,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.text.ParseException;
@@ -49,6 +50,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
     private StudentAchievementUtils studentAchievementUtils;
     private FloatingActionButton fab;
     private LineChart lineChart;
+    private LineChart strokeIndexLineChart;
     private String dataFile;
     public static final String KEY = "DataFile";
     public static final String SECONDARY_KEY = "Achievement";
@@ -58,6 +60,8 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
     private ArrayList<String> currentYaxisLabels;
     private Map<Integer, StudentAchievementUtils.Key> positionToKey;
     private Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap;
+    private LineDataSet lineDataSet;
+    private LineDataSet strokeIndexDataSet;
 
 
     @Override
@@ -66,6 +70,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
 
         setContentView(R.layout.activity_studentachievementchart);
         lineChart = (LineChart) findViewById(chart);
+        strokeIndexLineChart = (LineChart) findViewById(R.id.strokeIndexchart);
         //labelSpinner = (Spinner) findViewById(R.id.labelsSpinner);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
@@ -85,26 +90,50 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         currentXaxisLabels = new ArrayList<>();
         currentYaxisLabels = new ArrayList<>();
         fetchStudentAchievement();
-
     }
-    private void drawLineChart(LineDataSet dataSet)
+    private void drawLineChart()
     {
+        setLineDataSet();
+        List<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(lineDataSet);
+        dataSets.add(strokeIndexDataSet);
         //dataSet.setValueTextColor(0xFF00FF);
-        dataSet.setColor(Color.RED);
-        dataSet.setLineWidth(Float.valueOf(1));
-        dataSet.setDrawCircles(true);
-        dataSet.setFillColor(Color.rgb(0, 0, 0));
-        dataSet.setLineWidth(0.2f);
-        LineData lineData = new LineData(dataSet);
+        lineDataSet.setColor(Color.RED);
+        lineDataSet.setLineWidth(Float.valueOf(1));
+        lineDataSet.setDrawCircles(true);
+        lineDataSet.setFillColor(Color.rgb(0, 0, 0));
+        lineDataSet.setLineWidth(0.2f);
+
+        strokeIndexDataSet.setColor(Color.BLUE);
+        strokeIndexDataSet.setLineWidth(Float.valueOf(1));
+        strokeIndexDataSet.setDrawCircles(true);
+        strokeIndexDataSet.setFillColor(Color.rgb(0, 0, 0));
+        strokeIndexDataSet.setLineWidth(0.2f);
+
+        LineData lineData = new LineData(lineDataSet);
+        LineData strokeIndexLineData = new LineData(strokeIndexDataSet);
         lineData.setValueFormatter(new MyValueFormatter());
 
         XAxis x = lineChart.getXAxis();
         x.setEnabled(true);
         x.setDrawGridLines(false);
         x.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
-        x.setLabelCount(dataSet.getEntryCount());
+        x.setLabelCount(lineDataSet.getEntryCount());
         x.setLabelRotationAngle(45);
         x.setValueFormatter(new MyXAxisValueFormatter(currentXaxisLabels));
+
+        XAxis x2 = strokeIndexLineChart.getXAxis();
+        x2.setEnabled(true);
+        x2.setDrawGridLines(false);
+        x2.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        x2.setLabelCount(strokeIndexDataSet.getEntryCount());
+        x2.setLabelRotationAngle(45);
+        x2.setValueFormatter(new MyXAxisValueFormatter(currentXaxisLabels));
+
+        YAxis strokeIndexYAxis = strokeIndexLineChart.getAxisLeft();
+        strokeIndexYAxis.setEnabled(true);
+        strokeIndexYAxis.setDrawGridLines(false);
+        //strokeIndexYAxis.setGranularity(1000f);
 
         YAxis y = lineChart.getAxisLeft();
         y.setEnabled(true);
@@ -118,8 +147,8 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         lineChart.setData(lineData);
         lineChart.invalidate();
 
-
-
+        strokeIndexLineChart.setData(strokeIndexLineData);
+        strokeIndexLineChart.invalidate();
     }
     public static void startActivity(String dataFile, Context context) {
         Intent intent = new Intent(context, StudentAchievementChartActivity.class);
@@ -127,33 +156,40 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
 
         context.startActivity(intent);
     }
-    private LineDataSet getLineDataSet(Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap, int position)
+    private void setLineDataSet(int position)
     {
-        LineDataSet lineDataSet;
         StudentAchievementUtils.Key k = positionToKey.get(position);
-        lineDataSet = getLineDataSet(achievementsMap, positionToKey.get(position));
-
-        return lineDataSet;
+        setLineDataSet(positionToKey.get(position));
     }
-
+    private void setLineDataSet() {
+        if (baseStudentAchievement != null) {
+            //labelSpinner.getSelectedItemPosition();
+            StudentAchievementUtils.Key key = new StudentAchievementUtils.Key(baseStudentAchievement.style, baseStudentAchievement.distance);
+            setLineDataSet(key);
+        }
+    }
     @NonNull
-    private LineDataSet getLineDataSet(Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap, StudentAchievementUtils.Key k) {
-        LineDataSet lineDataSet;
+    private void setLineDataSet(StudentAchievementUtils.Key k) {
         List<StudentAchievement> values = achievementsMap.get(k);
 
         List<Entry> entries = new ArrayList<Entry>();
+        List<Entry> strokeIndexEntries = new ArrayList<Entry>();
 
         int i = 0;
         // turn your data into Entry objects
         for (StudentAchievement v : values) {
-            entries.add(new Entry(i++, Float.valueOf(v.time)));
+            entries.add(new Entry(i, Float.valueOf(v.time)));
+            strokeIndexEntries.add(new Entry(i, Float.valueOf(v.strokeIndex)));
+            i++;
             currentXaxisLabels.add(v.date);
             currentYaxisLabels.add(v.time);
         }
 
-        lineDataSet =  new LineDataSet(entries, "Stroke index of " + k.style + " " + k.distance);
+        lineDataSet =  new LineDataSet(entries, "Times for " + k.style + " " + k.distance);
         lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-        return lineDataSet;
+
+        strokeIndexDataSet = new LineDataSet(strokeIndexEntries, "Stroke index for " + k.style + " " + k.distance);
+
     }
 
     private void fetchStudentAchievement()
@@ -198,10 +234,7 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
                 });*/
         if (baseStudentAchievement != null)
         {
-            //labelSpinner.getSelectedItemPosition();
-            StudentAchievementUtils.Key key = new StudentAchievementUtils.Key(baseStudentAchievement.style, baseStudentAchievement.distance);
-
-            drawLineChart(getLineDataSet(achievementsMap,key));
+            drawLineChart();
         }
         //}
     }
