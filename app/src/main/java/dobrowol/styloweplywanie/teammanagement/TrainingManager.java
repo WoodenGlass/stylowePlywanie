@@ -38,7 +38,9 @@ import java.util.List;
 import java.util.Map;
 
 import dobrowol.styloweplywanie.R;
+import dobrowol.styloweplywanie.login.Login;
 import dobrowol.styloweplywanie.teammanagement.trainingdetails.AddStudentAchievementActivity;
+import dobrowol.styloweplywanie.utils.ConvertUtils;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
 import dobrowol.styloweplywanie.utils.ResultsAdapter;
 import dobrowol.styloweplywanie.utils.StudentAchievement;
@@ -57,6 +59,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     public static final String KEY = "TeamName";
     private static final int ADD_STUDENT_REQUEST = 2;
     private static final int JOIN_TEAM_REQUEST = 3;
+    private static final int SIGN_IN_REQUEST = 3;
     private String currentTime;
     private Button btnStart;
     private Button btnLap;
@@ -82,36 +85,19 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
     private StudentAchievement currentStudentAchievement;
     Spinner spnr;
     Spinner spnrDistance;
+    Spinner spnrPoolSize;
     EditText editStrokeCount;
     Button btnSave;
     private int numberOfRunningStopwatch;
 
 
-    String[] styles = {
-            "kraul",
-            "grzbiet",
-            "delfin",
-            "żabka",
-            "zmienny",
-            "NN kraul",
-            "NN delfin",
-            "NN żabka",
-            "NN grzbiet",
-            "NN delfin pod wodą",
-            "NN delfin na plecach pod wodą"
-    };
+    String[] styles;
 
-    String[] distances = {
-      "25m",
-            "50m",
-            "5m",
-            "10m",
-            "15m",
-            "100m",
-            "200m",
-            "400m",
-            "1500m"
-    };
+    String[] distances;
+     String[] pool_sizes = {
+            "25",
+            "50"};
+
     ArrayList<String> strokeCount;
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,6 +111,9 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
         {
             fetchTeam("");
         }
+        styles = getResources().getStringArray(R.array.styles);
+
+        distances = getResources().getStringArray(R.array.distances);
         numberOfRunningStopwatch = 0;
         btnStart = (Button) findViewById(R.id.btnStart);
         btnLap = (Button) findViewById(R.id.btnLap);
@@ -159,6 +148,7 @@ public class TrainingManager extends AppCompatActivity implements View.OnClickLi
 
         spnr = (Spinner)findViewById(R.id.tmSpinner);
         spnrDistance = (Spinner)findViewById(R.id.tmDistanceSpinner);
+        spnrPoolSize = (Spinner)findViewById(R.id.spnrPoolSize);
         editStrokeCount = findViewById(R.id.tmStrokeCountEditText);
         setupSpinner();
         btnSave = (Button) findViewById(R.id.btnSaveAchievement);
@@ -197,8 +187,10 @@ private void setupTouchInterceptor()
 }
     private void updateStrokeIndex()
     {
-        currentStudentAchievement.calculateStrokeIndex();
-        mStrokeIndex.setText("StrokeIndex: " + currentStudentAchievement.strokeIndex.toString());
+        if (currentStudentAchievement != null && currentStudentAchievement.strokeIndex != null) {
+            currentStudentAchievement.calculateStrokeIndex();
+            mStrokeIndex.setText("StrokeIndex: " + currentStudentAchievement.strokeIndex.toString());
+        }
     }
     private void setupSpinner()
     {
@@ -253,6 +245,30 @@ private void setupTouchInterceptor()
                     }
 
                 });
+         ArrayAdapter<String> adapterPool = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, pool_sizes);
+        spnrPoolSize.setAdapter(adapterPool);
+        spnrPoolSize.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+
+                        int position = spnrDistance.getSelectedItemPosition();
+                        currentStudentAchievement.poolSize = pool_sizes[+position];
+
+                        //Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                });
         strokeCount = new ArrayList<>();
         for (int i =0; i < 100; i++)
         {
@@ -282,9 +298,19 @@ private void setupTouchInterceptor()
                 return true;
             case R.id.action_add:
                 showAddAchievement();
+                return true;
+            case R.id.action_sign_in:
+                showSignIn();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showSignIn() {
+        Intent intent;
+        intent = new Intent(this, Login.class);
+        startActivityForResult(intent, SIGN_IN_REQUEST);
     }
 
     private void showAddAchievement() {
@@ -392,7 +418,7 @@ private void setupTouchInterceptor()
     public boolean onContextItemSelected(MenuItem item) {
         Log.d("DUPA", item.getTitle().toString());
         StudentData student = (StudentData) studentToStudentData.get(item.getTitle().toString());
-        mStudentName.setText(item.getTitle().toString()+" "+(String)(selectedTime));
+        mStudentName.setText(item.getTitle().toString()+" "+ ConvertUtils.formatTime(selectedTime));
         updateStrokeIndex();
         fileToSave = student.dataFile;
         return true;
@@ -565,6 +591,8 @@ private void setupTouchInterceptor()
     @Override
     public void onItem(int position) {
         //currentTime = ListElementsArrayList.get(position);
-        currentStudentAchievement.time = ListElementsArrayList.get(position).toString();
+        selectedTime =
+                currentStudentAchievement.time =
+                        ListElementsArrayList.get(position).toString();
     }
 }

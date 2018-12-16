@@ -12,6 +12,7 @@
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+
         />
 
     <android.support.design.widget.FloatingActionButton
@@ -22,6 +23,17 @@
         android:clickable="true"
         android:layout_marginBottom="30dp"
         android:src="@drawable/ic_list_black_24dp"
+        app:layout_anchor="@id/chart"
+        app:layout_anchorGravity="bottom|right|end"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_save"
+        android:layout_width="wrap_content"
+        android:layout_height="600dp"
+        android:layout_margin="64dp"
+        android:clickable="true"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/ic_archive_black_24dp"
         app:layout_anchor="@id/chart"
         app:layout_anchorGravity="bottom|right|end"/>
 

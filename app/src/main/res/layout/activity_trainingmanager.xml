@@ -83,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvStudentName"
             android:id="@+id/tvSrokeIndex" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,6 +92,11 @@
             android:gravity="right"
             android:text="save"
             android:id="@+id/btnSaveAchievement"/>
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spnrPoolSize"
+            android:layout_centerHorizontal="true"></Spinner>
     </RelativeLayout>
     <RelativeLayout
         android:focusable="true"

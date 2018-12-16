@@ -13,6 +13,7 @@ public class AchievementViewHolder extends RecyclerView.ViewHolder implements Vi
 
     private final TextView distanceLabel;
     private final TextView styleLabel;
+    private final TextView poolSizeLabel;
     private final TextView time;
     private AchievementAdapter.AchievementSelectedListener listener;
     private StudentAchievement achievement;
@@ -22,6 +23,7 @@ public class AchievementViewHolder extends RecyclerView.ViewHolder implements Vi
         distanceLabel = (TextView) itemView.findViewById(R.id.distance_textView);
         styleLabel = (TextView) itemView.findViewById(R.id.style_textView);
         time = (TextView) itemView.findViewById(R.id.description_textView);
+        poolSizeLabel = (TextView) itemView.findViewById(R.id.poolSize_textView);
 
         this.listener = listener;
         itemView.setOnClickListener(this);
@@ -32,6 +34,7 @@ public class AchievementViewHolder extends RecyclerView.ViewHolder implements Vi
         distanceLabel.setText(this.achievement.distance);
         styleLabel.setText(this.achievement.style);
         time.setText(achievement.formatTime());
+        poolSizeLabel.setText(achievement.poolSize);
     }
 
     @Override

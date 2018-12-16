@@ -10,6 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,7 +28,7 @@ public class CsvDataUtils {
 
     private String prepareLine(StudentAchievement data)
     {
-        return data.date + "," + data.style + "," + data.distance + ","+data.time+","+data.strokeCount+","+data.strokeIndex;
+        return data.date + "," + data.style + "," + data.distance + ","+data.time+","+data.strokeCount+","+data.strokeIndex+","+data.poolSize;
     }
     public void overwrite(List<StudentAchievement> list, String dataFile)
     {
@@ -73,6 +75,7 @@ public class CsvDataUtils {
     public ArrayList<StudentAchievement> getStudentAchievements(String dataFile)
     {
         ArrayList<StudentAchievement> achievements = new ArrayList<>();
+
         BufferedReader br = null;
         try {
             File file = new File(context.getFilesDir(), dataFile);
@@ -92,6 +95,10 @@ public class CsvDataUtils {
                 sa.distance = tokens[2];
                 sa.time = tokens[3];
                 sa.strokeCount = tokens[4];
+                if (tokens.length >= 6)
+                {
+                    sa.poolSize = tokens[5];
+                }
                 try {
                     sa.strokeIndex = Float.valueOf(tokens[5]);
                 }
@@ -113,6 +120,7 @@ public class CsvDataUtils {
                 e.printStackTrace();
             }
         }
+        Collections.sort(achievements);
         return achievements;
     }
 

@@ -20,6 +20,7 @@ import android.widget.EditText;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -151,6 +152,33 @@ public class StudentAchievementActivity extends AppCompatActivity implements Vie
         {
             case R.id.fab_check:
                 if (csvDataUtils != null) {
+                    List<String> klas = Arrays.asList(getResources().getStringArray(R.array.klasyczny));
+                    List<String> grzb = Arrays.asList(getResources().getStringArray(R.array.grzbietowy));
+                    List<String> mot = Arrays.asList(getResources().getStringArray(R.array.motylkowy));
+                    List<String> dow = Arrays.asList(getResources().getStringArray(R.array.dowolny));
+
+                    for (StudentAchievement achievement : listOfAchievements)
+                    {
+                        if (klas.contains(achievement.style))
+                        {
+                            achievement.style = klas.get(0);
+                        }
+                        else if (grzb.contains(achievement.style))
+                        {
+                            achievement.style = grzb.get(0);
+                        }
+                        else if (mot.contains(achievement.style))
+                        {
+                            achievement.style = mot.get(0);
+                        }
+                        else if (dow.contains(achievement.style))
+                        {
+                            achievement.style = dow.get(0);
+                        }
+                        achievement.distance = achievement.distance.replaceAll("\\D+","");
+                    }
+
+
                     csvDataUtils.overwrite(listOfAchievements, dataFile);
                 }
                 Intent returnIntent = new Intent();

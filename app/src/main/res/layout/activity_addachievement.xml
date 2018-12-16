@@ -5,17 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     
-    <EditText
+    <Spinner
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:hint="@string/style"
+        android:layout_height="50dp"
         android:id="@+id/et_newStyle"/>
-    <EditText
+    <Spinner
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:hint="@string/distance_hint"
+        android:layout_height="50dp"
         android:id="@+id/et_newDistance"/>
     <EditText
         android:layout_width="match_parent"
@@ -37,10 +33,16 @@
         android:inputType="numberDecimal"
         android:hint="@string/strokeCount"
         android:id="@+id/et_newStrokeCount"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="@string/poolSize"
+        android:id="@+id/et_poolSize"/>
     <Spinner
         android:id="@+id/spinner_students"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp">
 
     </Spinner>
     <android.support.design.widget.FloatingActionButton

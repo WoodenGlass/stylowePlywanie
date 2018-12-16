@@ -1,27 +1,35 @@
 package dobrowol.styloweplywanie.teammanagement.trainingdetails;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import dobrowol.styloweplywanie.R;
 import dobrowol.styloweplywanie.utils.ConvertUtils;
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
 import dobrowol.styloweplywanie.utils.StudentAchievement;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -49,11 +57,13 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
     private static final int EDIT_ACHIEVEMENTS = 1;
     private StudentAchievementUtils studentAchievementUtils;
     private FloatingActionButton fab;
+    private FloatingActionButton fab_save;
     private LineChart lineChart;
     private LineChart strokeIndexLineChart;
     private String dataFile;
     public static final String KEY = "DataFile";
     public static final String SECONDARY_KEY = "Achievement";
+    private String file_name;
     private Spinner labelSpinner;
     private StudentAchievement baseStudentAchievement;
     private ArrayList<String> currentXaxisLabels;
@@ -62,6 +72,11 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
     private Map<StudentAchievementUtils.Key, List<StudentAchievement>> achievementsMap;
     private LineDataSet lineDataSet;
     private LineDataSet strokeIndexDataSet;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
 
     @Override
@@ -74,7 +89,10 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         //labelSpinner = (Spinner) findViewById(R.id.labelsSpinner);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
-         // add entries to dataset
+        fab_save = (FloatingActionButton) findViewById(R.id.fab_save);
+        fab_save.setOnClickListener(this);
+
+        // add entries to dataset
         //dataSet.setColor(0x2db82d);
 
         //dataSet.setValueTextColor(0xFFFA);
@@ -82,14 +100,77 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(KEY)) {
             dataFile= intent.getExtras().getString(KEY);
+            String []splited = dataFile.split("\\.");
+            file_name=splited[0];
         }
         if (intent != null & intent.hasExtra(SECONDARY_KEY))
         {
             baseStudentAchievement = (StudentAchievement) intent.getExtras().getSerializable(SECONDARY_KEY);
+
         }
         currentXaxisLabels = new ArrayList<>();
         currentYaxisLabels = new ArrayList<>();
         fetchStudentAchievement();
+        verifyStoragePermissions(this);
+    }
+    private void drawBarChart()
+    {
+        LineChart chart = (LineChart) findViewById(R.id.chart);
+        List<Entry> entries = new ArrayList<Entry>();
+        StudentAchievementUtils.Key k = new StudentAchievementUtils.Key(baseStudentAchievement.style, baseStudentAchievement.distance);
+        List<StudentAchievement> values = achievementsMap.get(k);
+        int i = 0;
+        // turn your data into Entry objects
+        for (StudentAchievement v : values) {
+            entries.add(new Entry(i, Float.valueOf(v.time)));
+            currentXaxisLabels.add(v.date);
+            i++;
+        }
+
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.add("January");
+        labels.add("February");
+        labels.add("March");
+        labels.add("April");
+        labels.add("May");
+        labels.add("June");
+
+
+        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
+
+        LineData data = new LineData(dataset);
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        XAxis x = chart.getXAxis();
+        x.setEnabled(true);
+        x.setDrawGridLines(true);
+        x.setPosition(XAxis.XAxisPosition.BOTTOM);
+        x.setGranularity(1f);
+        x.setLabelCount(currentXaxisLabels.size());
+        x.setLabelRotationAngle(45);
+        x.setValueFormatter(new MyXAxisValueFormatter(currentXaxisLabels));
+
+        YAxis y = chart.getAxisLeft();
+        y.setEnabled(true);
+
+        //y.setValueFormatter(new MyYAxisValueFormatter(currentYaxisLabels));
+        y.setDrawLabels(false);
+        y.setLabelCount(currentXaxisLabels.size());
+
+        // y.setGranularity(1000f);
+
+        YAxis y2 = chart.getAxisRight();
+        y2.setEnabled(false);
+        y.setDrawLabels(false);
+
+
+        chart.getDescription().setPosition(200f,20f);
+        chart.getDescription().setTextSize(16);
+        chart.getDescription().setText(baseStudentAchievement.distance + "m " + baseStudentAchievement.style);
+
+        chart.setExtraOffsets(20,20,20,20);
+        chart.setData(data);
+        chart.fitScreen();
+
     }
     private void drawLineChart()
     {
@@ -110,17 +191,19 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         strokeIndexDataSet.setFillColor(Color.rgb(0, 0, 0));
         strokeIndexDataSet.setLineWidth(0.2f);
 
-        LineData lineData = new LineData(lineDataSet);
+        LineData lineData = new LineData( lineDataSet);
         LineData strokeIndexLineData = new LineData(strokeIndexDataSet);
         lineData.setValueFormatter(new MyValueFormatter());
 
         XAxis x = lineChart.getXAxis();
         x.setEnabled(true);
-        x.setDrawGridLines(false);
-        x.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        x.setDrawGridLines(true);
+        x.setPosition(XAxis.XAxisPosition.BOTTOM);
         x.setLabelCount(lineDataSet.getEntryCount());
         x.setLabelRotationAngle(45);
         x.setValueFormatter(new MyXAxisValueFormatter(currentXaxisLabels));
+        x.setLabelCount(currentXaxisLabels.size());
+        x.setGranularity(1f);
 
         XAxis x2 = strokeIndexLineChart.getXAxis();
         x2.setEnabled(true);
@@ -138,13 +221,20 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
         YAxis y = lineChart.getAxisLeft();
         y.setEnabled(true);
         y.setDrawGridLines(false);
-        y.setValueFormatter(new MyYAxisValueFormatter(currentYaxisLabels));
-        y.setGranularity(1000f);
+        //y.setValueFormatter(new MyYAxisValueFormatter(currentYaxisLabels));
+        y.setDrawLabels(false);
+        y.setLabelCount(currentXaxisLabels.size());
+
+       // y.setGranularity(1000f);
 
         YAxis y2 = lineChart.getAxisRight();
         y2.setEnabled(false);
 
         lineChart.setData(lineData);
+        lineChart.getDescription().setPosition(200f,20f);
+        lineChart.getDescription().setTextSize(12);
+        lineChart.getDescription().setText(baseStudentAchievement.distance + "m " + baseStudentAchievement.style);
+        lineChart.setExtraOffsets(40,20,40,20);
         lineChart.invalidate();
 
         strokeIndexLineChart.setData(strokeIndexLineData);
@@ -185,8 +275,8 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
             currentYaxisLabels.add(v.time);
         }
 
-        lineDataSet =  new LineDataSet(entries, "Times for " + k.style + " " + k.distance);
-        lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        lineDataSet =  new LineDataSet(entries, "Czas na " + k.distance + "m " + k.style);
+        //lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
 
         strokeIndexDataSet = new LineDataSet(strokeIndexEntries, "Stroke index for " + k.style + " " + k.distance);
 
@@ -241,12 +331,35 @@ public class StudentAchievementChartActivity extends AppCompatActivity implement
 
     @Override
     public void onClick(View v) {
-        Intent i = new Intent(this, StudentAchievementActivity.class);
-        i.putExtra(StudentAchievementActivity.KEY, dataFile);
-        startActivityForResult(i, EDIT_ACHIEVEMENTS);
-        //StudentAchievementActivity.startActivity(dataFile, StudentAchievementChartActivity.this);
-    }
+        switch(v.getId()) {
+            case R.id.fab:
+            Intent i = new Intent(this, StudentAchievementActivity.class);
+            i.putExtra(StudentAchievementActivity.KEY, dataFile);
+            startActivityForResult(i, EDIT_ACHIEVEMENTS);
+            break;
 
+            case R.id.fab_save:
+                Long tsLong = System.currentTimeMillis()/1000;
+                String ts = tsLong.toString();
+            boolean saved = lineChart.saveToGallery(file_name+ts,100);
+                Toast.makeText(getApplicationContext(),"File saved "+saved, Toast.LENGTH_LONG ).show();
+            break;
+            //StudentAchievementActivity.startActivity(dataFile, StudentAchievementChartActivity.this);
+        }
+    }
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
     public class MyYAxisValueFormatter implements IAxisValueFormatter{
     private List<String> mValues;
 

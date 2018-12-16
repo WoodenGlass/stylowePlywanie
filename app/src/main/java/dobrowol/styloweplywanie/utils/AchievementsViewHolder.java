@@ -96,7 +96,7 @@ public class AchievementsViewHolder extends RecyclerView.ViewHolder implements V
         styleEt.setText(studentAchievement.style);
         distanceEt.setText(studentAchievement.distance);
         strokeCountEt.setText(studentAchievement.strokeCount);
-        timeET.setText(studentAchievement.time);
+        timeET.setText(studentAchievement.formatTime());
         dateEt.setText(studentAchievement.displayDate());
 
         styleTv.setText(studentAchievement.style);
@@ -211,6 +211,7 @@ public class AchievementsViewHolder extends RecyclerView.ViewHolder implements V
                     {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
+                        case KeyEvent.KEYCODE_0:
                             captureAchievement();
                             return true;
                         default:

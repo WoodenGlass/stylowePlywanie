@@ -1,5 +1,7 @@
 package dobrowol.styloweplywanie.utils;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,27 +14,46 @@ import java.util.regex.Pattern;
  * Created by dobrowol on 01.02.18.
  */
 
-public class StudentAchievement implements Serializable {
+public class StudentAchievement implements Serializable,  Comparable<StudentAchievement> {
     public String style;
     public String distance;
     public String strokeCount;
     public String time;
     public String date;
     public Float strokeIndex;
+    private String pattern;
+    public String poolSize;
+
+    public StudentAchievement()
+    {
+        pattern = "dd/MM/yyyy";
+    }
     public void setDate()
     {
-        date = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+        date = new SimpleDateFormat(pattern).format(Calendar.getInstance().getTime());
     }
     public void setDate(Date aDate)
     {
         if (aDate != null) {
-            date = new SimpleDateFormat("dd/MM/yyyy").format(aDate);
+            date = new SimpleDateFormat(pattern).format(aDate);
         }
+    }
+    public Date getDate()
+    {
+        if (date != null && date != "")
+        {
+            try {
+                return new SimpleDateFormat(pattern).parse(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
     public void setDate(String dateStr)
     {
         String formattedDate;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         if (dateStr != null) {
             if ((formattedDate = sdf.format(dateStr)) != null) {
                 date = formattedDate;
@@ -53,7 +74,7 @@ public class StudentAchievement implements Serializable {
 
         Date d = ConvertUtils.stringToDate(date);
         if (d != null) {
-            formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(d);
+            formattedDate = new SimpleDateFormat(pattern).format(d);
             return formattedDate;
         }
         return "";
@@ -185,5 +206,12 @@ public class StudentAchievement implements Serializable {
             return 0;
         Integer seconds = Integer.parseInt(time);
         return seconds%1000;
+    }
+
+    @Override
+    public int compareTo(@NonNull StudentAchievement studentAchievement) {
+        if (getDate() == null || studentAchievement.getDate() == null)
+            return 0;
+        return getDate().compareTo(studentAchievement.getDate());
     }
 }

@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import dobrowol.styloweplywanie.R;
 import dobrowol.styloweplywanie.teammanagement.trainingdetails.StudentAchievementChartActivity;
+import dobrowol.styloweplywanie.utils.CsvDataUtils;
+import dobrowol.styloweplywanie.utils.StudentAchievement;
 import dobrowol.styloweplywanie.utils.StudentAdapter;
 import dobrowol.styloweplywanie.utils.StudentData;
 import dobrowol.styloweplywanie.utils.TeamData;
@@ -26,7 +28,11 @@ import dobrowol.styloweplywanie.utils.WrapContentLinearLayoutManager;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by dobrowol on 02.12.17.
@@ -79,8 +85,63 @@ public class StudentsActivity extends AppCompatActivity implements StudentAdapte
         teamData = teamUtils.getTeam(teamName);
         if (teamData != null) {
             adapter.setItems(teamData.students);
+            //normalizeData();
         }
     }
+
+    private void normalizeData() {
+        List<StudentData> students = teamData.students;
+        CsvDataUtils csvDataUtils = new CsvDataUtils(getApplicationContext());
+        for (StudentData studentData :students)
+        {
+            ArrayList<StudentAchievement> achievements = csvDataUtils.getStudentAchievements(studentData.dataFile);
+            unifyAchievements(achievements);
+            csvDataUtils.overwrite(achievements,studentData.dataFile);
+        }
+    }
+
+
+    private void unifyAchievements(ArrayList<StudentAchievement> achievements) {
+        String []klasyczny = getResources().getStringArray(R.array.klasyczny);
+        String []grzbietowy = getResources().getStringArray(R.array.grzbietowy);
+        String []dowolny = getResources().getStringArray(R.array.dowolny);
+        String []motylkowy = getResources().getStringArray(R.array.motylkowy);
+
+        Set<String> KLAS_VALUES = new HashSet<String>(Arrays.asList(
+                klasyczny
+        ));
+        Set<String> GRZB_VALUES = new HashSet<String>(Arrays.asList(
+                grzbietowy
+        ));
+        Set<String> DOW_VALUES = new HashSet<String>(Arrays.asList(
+                dowolny
+        ));
+        Set<String> MOT_VALUES = new HashSet<String>(Arrays.asList(
+                motylkowy
+        ));
+        String []distances = getResources().getStringArray(R.array.distances);
+        for (StudentAchievement achievement : achievements)
+        {
+            if(KLAS_VALUES.contains(achievement.style))
+            {
+                achievement.style=klasyczny[0];
+            }
+            else if(GRZB_VALUES.contains(achievement.style))
+            {
+                achievement.style=grzbietowy[0];
+            }
+            else if(DOW_VALUES.contains(achievement.style))
+            {
+                achievement.style=dowolny[0];
+            }
+            else if(MOT_VALUES.contains(achievement.style))
+            {
+                achievement.style=motylkowy[0];
+            }
+            achievement.distance=achievement.distance.replaceAll("m", "");
+        }
+    }
+
     private void fetchStudent(StudentData studentData) {
         Log.d("DUPA", "fetchStudent");
         //TeamDetailsActivity.startDetailsActivity(teamData, JoinTeamActivity.this);

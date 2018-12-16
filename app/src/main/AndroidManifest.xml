@@ -5,7 +5,8 @@
     <!-- To auto-complete the email text field in the login form with the user's emails -->
  
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
 
     <application
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
@@ -15,15 +16,6 @@
         android:supportsRtl="true"
         android:name=".MainApp"
         >
-        <activity android:name=".welcome.CreateTeamActivity"
-            android:parentActivityName=".welcome.InitialWelcome" >
-            <!-- The meta-data tag is required if you support API level 15 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".welcome.InitialWelcome" />
-
-        </activity>
-
         <activity android:name=".teammanagement.TeamActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -84,28 +76,7 @@
             >
 
         </activity>
-        <receiver android:enabled="true" android:exported="true" android:label="BootService" android:name=".BootService">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_INSTALL"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_CHANGED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-        </receiver>
+        <activity android:name=".login.Login" />
     </application>
 
 </manifest>

@@ -15,9 +15,11 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,10 +39,11 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
 
     public static final String KEY="StudentAchievement";
     private String dataFile;
-    private EditText etStyle;
-    private EditText etDistance;
+    private Spinner etStyle;
+    private Spinner etDistance;
     private EditText etDate;
     private EditText etTime;
+    private EditText etPoolSize;
     private EditText etStrokeCount;
     private Spinner spinnerStudents;
     private FloatingActionButton fbAccept;
@@ -48,17 +51,22 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
     private Map studentToStudentData;
     private ArrayList<String> students;
     private String currentStudent;
+    private ArrayList<String> styles;
+    private String currentStyle;
     private Calendar dateOfAchievement;
+    private ArrayList<String> distances;
+    private String currentDistance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addachievement);
 
-        etStyle = (EditText) findViewById(R.id.et_newStyle);
-        etDistance = (EditText) findViewById(R.id.et_newDistance);
+        etStyle = (Spinner) findViewById(R.id.et_newStyle);
+        etDistance = (Spinner) findViewById(R.id.et_newDistance);
         etDate = (EditText) findViewById(R.id.et_newDate);
         etTime = (EditText) findViewById(R.id.et_newTime);
+        etPoolSize = (EditText) findViewById(R.id.et_poolSize);
         etStrokeCount = (EditText) findViewById(R.id.et_newStrokeCount);
         spinnerStudents = (Spinner) findViewById(R.id.spinner_students);
         fbAccept = (FloatingActionButton) findViewById(R.id.fbAccept);
@@ -66,6 +74,12 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
         etDate.setOnClickListener(this);
         etDate.setOnFocusChangeListener(this);
         currentStudent = "";
+        currentStyle = "";
+        currentDistance = "";
+        styles = new ArrayList<>();
+        Collections.addAll(styles,getResources().getStringArray(R.array.styles));
+        distances = new ArrayList<>();
+        Collections.addAll(distances,getResources().getStringArray(R.array.distances));
         Intent intent = getIntent();
         if (intent != null & intent.hasExtra(TrainingManager.KEY)) {
             fetchTeam(intent.getStringExtra(TrainingManager.KEY));
@@ -92,6 +106,57 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
 
                         int position = spinnerStudents.getSelectedItemPosition();
                         currentStudent = students.get(+position);
+                        //Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                });
+
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, styles);
+
+        etStyle.setAdapter(adapter2);
+        etStyle.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+
+                        int position = etStyle.getSelectedItemPosition();
+                        if (position>=0)
+                            currentStyle = styles.get(+position);
+                        //Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                });
+        ArrayAdapter<String> adapter3 = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, distances);
+
+        etDistance.setAdapter(adapter3);
+        etDistance.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                               int arg2, long arg3) {
+
+                        int position = etDistance.getSelectedItemPosition();
+                        if(position>=0)
+                            currentDistance = distances.get(+position);
                         //Toast.makeText(getApplicationContext(),"You have selected "+distances[+position],Toast.LENGTH_SHORT).show();
                         // TODO Auto-generated method stub
                     }
@@ -142,17 +207,27 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
                 if (date != null) {
                     studentAchievement.setDate(date);
                 }
-                studentAchievement.distance = etDistance.getText().toString();
+                if (currentDistance != null)
+                {
+                    studentAchievement.distance = currentDistance;
+                }
+
                 studentAchievement.strokeCount = etStrokeCount.getText().toString();
-                studentAchievement.style = etStyle.getText().toString();
+                if (currentStyle != null)
+                {
+                    studentAchievement.style = currentStyle;
+                }
+                studentAchievement.poolSize = etPoolSize.getText().toString();
                 studentAchievement.setTime(etTime.getText().toString());
 
                 if (currentStudent != null)
                 {
                     StudentData studentData = (StudentData) studentToStudentData.get(currentStudent);
-                    CsvDataUtils csvDataUtils = new CsvDataUtils(AddStudentAchievementActivity.this);
-                    csvDataUtils.saveStudentAchievement(studentAchievement, studentData.dataFile);
-                    clearFields();
+                    if (studentData != null) {
+                        CsvDataUtils csvDataUtils = new CsvDataUtils(AddStudentAchievementActivity.this);
+                        csvDataUtils.saveStudentAchievement(studentAchievement, studentData.dataFile);
+                        clearFields();
+                    }
                 }
                 else {
                     Intent returnIntent = new Intent();
@@ -184,9 +259,7 @@ public class AddStudentAchievementActivity extends AppCompatActivity implements 
 
     private void clearFields() {
         etDate.setText("");
-        etDistance.setText("");
         etStrokeCount.setText("");
-        etStyle.setText("");
         etTime.setText("");
     }
 

@@ -50,7 +50,7 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder implements View.O
 
     @Override
     public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-        contextMenu.add(0, view.getId(), 0, "Delete");
+
     }
 }
 

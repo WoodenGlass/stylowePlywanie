@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="styles">
+        <item
+            >dowolny</item>
+        <item
+            >grzbietowy</item>
+        <item
+            >motylkowy</item>
+        <item
+            >klasyczny</item>
+        <item
+            >zmienny</item>
+        <item
+            >NN dowlony</item>
+        <item
+            >NN grzbietowy</item>
+        <item
+            >NN motylkowy</item>
+        <item
+            >NN klasyczny</item>
+    </string-array>
+    <string-array
+        name="klasyczny">
+        <item
+            >klasyczny</item>
+        <item
+            >żabka</item>
+        <item
+            >żaba</item>
+
+    </string-array>
+    <string-array
+        name="grzbietowy">
+        <item
+            >grzbietowy</item>
+        <item
+            >grzbiet</item>
+    </string-array>
+    <string-array
+        name="dowolny">
+        <item
+            >dowolny</item>
+        <item
+            >kraul</item>
+    </string-array>
+    <string-array
+        name="motylkowy">
+        <item
+            >motylkowy</item>
+        <item
+            >delfin</item>
+        <item
+            >motyl</item>
+    </string-array>
+
+    <string-array
+        name="distances">
+        <item
+            >15</item>
+        <item
+            >25</item>
+        <item
+            >50</item>
+        <item
+            >75</item>
+        <item
+            >100</item>
+        <item
+            >200</item>
+        <item
+            >400</item>
+        <item
+            >800</item>
+        <item
+            >1000</item>
+        <item
+            >1500</item>
+    </string-array>
+
+</resources>

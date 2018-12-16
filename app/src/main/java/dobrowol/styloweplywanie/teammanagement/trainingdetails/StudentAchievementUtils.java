@@ -1,6 +1,7 @@
 package dobrowol.styloweplywanie.teammanagement.trainingdetails;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import dobrowol.styloweplywanie.utils.CsvDataUtils;
 import dobrowol.styloweplywanie.utils.LanguageUtils;
@@ -19,7 +20,9 @@ public class StudentAchievementUtils {
     public static class Key{
         public String style;
         public String distance;
-        Key(String style, String distance){this.style = LanguageUtils.removePolishSigns(style); this.distance = distance;}
+        Key(String style, String distance){
+            this.style = LanguageUtils.removePolishSigns(style);
+            this.distance = distance;}
         public int hashCode() {
             return (style+distance).hashCode();
         }
